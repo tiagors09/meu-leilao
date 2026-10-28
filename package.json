@@ -4,5 +4,8 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
 }
