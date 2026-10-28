@@ -2,7 +2,7 @@
 
 ## Status Atual
 - Ultima funcionalidade concluida: conexao PostgreSQL, DDL inicial para seis tabelas com os tres perfis suportados e repositories de usuario/carteira com dependencia de banco injetada.
-- Ultimo commit realizado: nao realizado; o diretorio `.git` esta vazio e o repositorio nao e reconhecido pelo Git.
+- Ultimo commit realizado: `docs(monorepo): atualiza relatorio do bloco inicial`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
