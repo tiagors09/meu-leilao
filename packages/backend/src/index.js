@@ -5,14 +5,17 @@ import { createApp } from './app.js';
 import { pool } from './config/db.js';
 import { UserController } from './controllers/UserController.js';
 import { WalletController } from './controllers/WalletController.js';
+import { BidController } from './controllers/BidController.js';
 import { AuctionLotController } from './controllers/AuctionLotController.js';
 import { ItemController } from './controllers/ItemController.js';
 import { createAuthMiddleware, createRoleMiddleware } from './middlewares/authMiddleware.js';
 import { AuctionLotRepository } from './repositories/AuctionLotRepository.js';
+import { BidRepository } from './repositories/BidRepository.js';
 import { ItemRepository } from './repositories/ItemRepository.js';
 import { UserRepository } from './repositories/UserRepository.js';
 import { WalletRepository } from './repositories/WalletRepository.js';
 import { AuctionLotService } from './services/AuctionLotService.js';
+import { BidService } from './services/BidService.js';
 import { ItemService } from './services/ItemService.js';
 import { UserService } from './services/UserService.js';
 import { WalletService } from './services/WalletService.js';
@@ -28,6 +31,7 @@ const userRepository = new UserRepository(pool);
 const walletRepository = new WalletRepository(pool);
 const itemRepository = new ItemRepository(pool);
 const auctionLotRepository = new AuctionLotRepository(pool);
+const bidRepository = new BidRepository(pool);
 const userService = new UserService({
   userRepository,
   passwordHasher: bcrypt,
@@ -41,10 +45,12 @@ const itemService = new ItemService({
   apiBaseUrl: process.env.EXTERNAL_ITEMS_API_URL,
 });
 const auctionLotService = new AuctionLotService({ auctionLotRepository, itemRepository });
+const bidService = new BidService({ bidRepository });
 const userController = new UserController({ userService });
 const walletController = new WalletController({ walletService });
 const itemController = new ItemController({ itemService });
 const auctionLotController = new AuctionLotController({ auctionLotService });
+const bidController = new BidController({ bidService });
 const authenticate = createAuthMiddleware({ tokenVerifier: jwt, jwtSecret: JWT_SECRET });
 const checkRole = createRoleMiddleware;
 const app = createApp({
@@ -52,6 +58,7 @@ const app = createApp({
   walletController,
   itemController,
   auctionLotController,
+  bidController,
   authenticate,
   checkRole,
 });

@@ -10,6 +10,7 @@ export function createApp({
   walletController,
   itemController,
   auctionLotController,
+  bidController,
   authenticate,
   checkRole,
 }) {
@@ -21,7 +22,12 @@ export function createApp({
   app.use('/api/external-items', createItemRoutes({ itemController }));
   app.use(
     '/api/lots',
-    createAuctionLotRoutes({ auctionLotController, authenticate, checkRole }),
+    createAuctionLotRoutes({
+      auctionLotController,
+      bidController,
+      authenticate,
+      checkRole,
+    }),
   );
   app.use(
     '/api/wallets',
