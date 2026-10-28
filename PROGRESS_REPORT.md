@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 03 implementado; smoke test PostgreSQL aprovado e catalogo externo, cache local e criacao/listagem de lotes conectados.
-- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 03`.
+- Ultima funcionalidade concluida: passo 04 implementado com validacao transacional de lances, saldo comprometido, devolucao ao lider anterior e prorrogacao anti-sniping.
+- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 04`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -24,6 +24,10 @@
 - `ItemController` e `AuctionLotController` recebem seus services; rotas adicionadas em `/api/external-items/search` e `/api/lots`.
 - Criacao de lotes em `POST /api/lots` exige JWT e papel `LEILOEIRO` ou `ADMIN`; `GET /api/lots` aceita filtro por status.
 - Validacao de banco: container `postgres:16-alpine` healthy, `init.sql` executado e `npm run smoke --workspace=backend` aprovado.
+- `BidRepository(database)` executa a transacao do lance, bloqueia o lote e as carteiras envolvidas, ajusta saldo comprometido e grava o lance.
+- `BidService({ bidRepository, clock })` valida status/horario, lance minimo, lider atual e saldo disponivel; prorroga o lote em dois minutos se faltarem menos de dois minutos.
+- `BidController` recebe `BidService`; `POST /api/lots/:id/bids` exige JWT e papel `LICITANTE`.
+- Cada lance grava `previous_hash` e SHA-256 para satisfazer o schema e encadear os registros; verificacao publica da cadeia e liquidacao ficam para o passo 05.
 
 ## Proximo Passo Imediato
-- Implementar o passo 04: motor de lances com validacao, saldo comprometido, estorno do lider anterior e regra anti-sniping.
+- Implementar o passo 05: auditoria publica da cadeia SHA-256, encerramento/liquidacao de lotes e comprovantes compartilhaveis.
