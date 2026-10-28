@@ -1,11 +1,15 @@
 import cors from 'cors';
 import express from 'express';
+import { createAuctionLotRoutes } from './routes/auctionLotRoutes.js';
+import { createItemRoutes } from './routes/itemRoutes.js';
 import { createUserRoutes } from './routes/userRoutes.js';
 import { createWalletRoutes } from './routes/walletRoutes.js';
 
 export function createApp({
   userController,
   walletController,
+  itemController,
+  auctionLotController,
   authenticate,
   checkRole,
 }) {
@@ -14,6 +18,11 @@ export function createApp({
   app.use(cors());
   app.use(express.json());
   app.use('/api/users', createUserRoutes({ userController }));
+  app.use('/api/external-items', createItemRoutes({ itemController }));
+  app.use(
+    '/api/lots',
+    createAuctionLotRoutes({ auctionLotController, authenticate, checkRole }),
+  );
   app.use(
     '/api/wallets',
     createWalletRoutes({ walletController, authenticate, checkRole }),

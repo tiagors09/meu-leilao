@@ -46,6 +46,7 @@ services:
       PORT_BACKEND: 3000
       DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-senha123}@postgres:5432/${DB_NAME:-leilao_db}
       JWT_SECRET: ${JWT_SECRET:-defina_um_segredo_longo_e_aleatorio}
+      EXTERNAL_ITEMS_API_URL: ${EXTERNAL_ITEMS_API_URL:-https://dummyjson.com}
     volumes:
       - ./packages/backend:/app/packages/backend
       - ./packages/shared:/app/packages/shared
