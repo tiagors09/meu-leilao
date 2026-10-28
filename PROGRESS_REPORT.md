@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 02 implementado; infraestrutura PostgreSQL no Compose e smoke test criados, aguardando acesso ao Docker para validar banco, usuario e carteira.
-- Ultimo commit realizado: `docs(monorepo): registra validacao do PostgreSQL e ponto de parada`.
+- Ultima funcionalidade concluida: passo 03 implementado; smoke test PostgreSQL aprovado e catalogo externo, cache local e criacao/listagem de lotes conectados.
+- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 03`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -17,7 +17,13 @@
 - Docker Compose executa PostgreSQL 16, mapeia a porta 5432, aguarda healthcheck e monta `src/config/init.sql` na inicializacao do volume.
 - `DATABASE_URL` local configurada em `packages/backend/.env.example`; no Compose, o backend recebe a URL usando o host `postgres`.
 - `src/tests/smokeTest.js` usa `UserRepository` e `WalletRepository`, valida a criacao da carteira e remove o usuario temporario ao final.
-- O smoke test ainda nao passou: a tentativa de iniciar o Docker falhou por falta de permissao no socket `/var/run/docker.sock`.
+- `ItemRepository(database)` consulta itens em cache, busca por ID local e atualiza itens externos por `id_externo`.
+- `ItemService({ itemRepository, httpClient, apiBaseUrl, timeoutMs })` consulta DummyJSON, aplica timeout e retorna resultados do cache local em falhas da API.
+- `AuctionLotRepository(database)` cria lotes e lista lotes com filtro opcional de status.
+- `AuctionLotService({ auctionLotRepository, itemRepository, clock })` valida item, valores e datas, e define status inicial `SCHEDULED` ou `LIVE`.
+- `ItemController` e `AuctionLotController` recebem seus services; rotas adicionadas em `/api/external-items/search` e `/api/lots`.
+- Criacao de lotes em `POST /api/lots` exige JWT e papel `LEILOEIRO` ou `ADMIN`; `GET /api/lots` aceita filtro por status.
+- Validacao de banco: container `postgres:16-alpine` healthy, `init.sql` executado e `npm run smoke --workspace=backend` aprovado.
 
 ## Proximo Passo Imediato
-- Habilitar o acesso do usuario ao socket do Docker (ou iniciar o container PostgreSQL em um ambiente acessivel) e executar `npm run smoke --workspace=backend`; depois do teste aprovado, implementar o passo 03 de API externa, cache de itens e lotes.
+- Implementar o passo 04: motor de lances com validacao, saldo comprometido, estorno do lider anterior e regra anti-sniping.
