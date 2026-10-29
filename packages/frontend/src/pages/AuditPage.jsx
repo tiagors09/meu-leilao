@@ -1,0 +1,22 @@
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import api, { dateTime, getApiError, money } from '../lib/api'
+
+export default function AuditPage() {
+  const { id } = useParams()
+  const [audit, setAudit] = useState(null)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    let active = true
+    api.get(`/lots/${id}/audit`).then(({ data }) => { if (active) setAudit(data) })
+      .catch((requestError) => { if (active) setError(getApiError(requestError, 'Nao foi possivel carregar a auditoria.')) })
+      .finally(() => { if (active) setLoading(false) })
+    return () => { active = false }
+  }, [id])
+
+  return <div className="mx-auto max-w-4xl"><Link to={`/lote/${id}`} className="text-sm font-bold text-slate-500 hover:text-amber-700">← Voltar ao lote</Link><div className="mt-6"><p className="text-xs font-extrabold uppercase tracking-[0.22em] text-amber-700">Transparencia verificavel</p><h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">Auditoria do lote <span className="text-slate-400">#{id}</span></h1><p className="mt-3 max-w-2xl text-slate-500">Cada lance esta ligado ao anterior por um hash SHA-256. A verificacao e publica e pode ser refeita a qualquer momento.</p></div>
+    {loading ? <div className="mt-8 h-48 animate-pulse rounded-3xl bg-slate-200" /> : error ? <p role="alert" className="mt-8 rounded-2xl bg-rose-50 p-5 text-rose-800">{error}</p> : <><div className={`mt-8 flex items-center gap-4 rounded-3xl border p-5 sm:p-7 ${audit.is_valid ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'}`}><span className={`grid size-14 shrink-0 place-items-center rounded-2xl text-2xl ${audit.is_valid ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{audit.is_valid ? '✓' : '!'}</span><div><p className={`text-lg font-black ${audit.is_valid ? 'text-emerald-900' : 'text-rose-900'}`}>{audit.is_valid ? 'Historico Integro' : 'Integridade comprometida'}</p><p className={`mt-1 text-sm ${audit.is_valid ? 'text-emerald-800' : 'text-rose-800'}`}>{audit.chain.length} lances verificados na cadeia SHA-256.</p></div><span className="ml-auto hidden rounded-full border border-current/20 px-3 py-1 text-xs font-extrabold sm:inline">{audit.is_valid ? 'VALIDADO' : 'ADULTERADO'}</span></div>
+      {audit.chain.length ? <div className="relative mt-8 space-y-4 before:absolute before:bottom-8 before:left-6 before:top-8 before:w-px before:bg-slate-200 sm:before:left-8">{audit.chain.map((bid, index) => <article key={bid.id} className="relative rounded-3xl border border-slate-200 bg-white p-5 pl-16 shadow-sm sm:p-6 sm:pl-20"><span className={`absolute left-3 top-6 grid size-7 place-items-center rounded-full text-xs font-black sm:left-4 ${bid.is_valid ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{index + 1}</span><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-widest text-slate-400">Lance #{bid.id}</p><p className="mt-1 text-xl font-black">{money(bid.amount)}</p></div><span className={`rounded-full px-3 py-1 text-xs font-extrabold ${bid.is_valid ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}`}>{bid.is_valid ? 'Elo valido' : 'Elo invalido'}</span></div><div className="mt-4 grid gap-3 text-sm sm:grid-cols-2"><div><p className="text-xs font-bold uppercase tracking-wider text-slate-400">Licitante</p><p className="mt-1 font-semibold text-slate-700">{bid.bidder}</p></div><div><p className="text-xs font-bold uppercase tracking-wider text-slate-400">Registrado</p><p className="mt-1 font-semibold text-slate-700">{dateTime(bid.created_at)}</p></div></div><div className="mt-4 space-y-2 rounded-2xl bg-slate-50 p-3 sm:p-4"><div><p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Hash anterior</p><code className="mt-1 block break-all font-mono text-[10px] leading-relaxed text-slate-600 sm:text-xs">{bid.previous_hash}</code></div><div className="border-t border-slate-200 pt-2"><p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">SHA-256</p><code className="mt-1 block break-all font-mono text-[10px] leading-relaxed text-slate-800 sm:text-xs">{bid.hash}</code></div></div></article>)}</div> : <div className="mt-8 rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">Este lote ainda nao recebeu lances para auditar.</div>}</>}
+  </div>
+}
