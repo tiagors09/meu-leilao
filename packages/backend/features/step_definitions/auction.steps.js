@@ -95,6 +95,11 @@ Then('o lance deve ser rejeitado por valor abaixo do minimo', function () {
   assert.match(this.error?.message, /lance minimo/i);
 });
 
+Then('o lance deve ser rejeitado por saldo insuficiente', function () {
+  assert.equal(this.error?.statusCode, 409);
+  assert.match(this.error?.message, /saldo disponivel insuficiente/i);
+});
+
 Given('que eu sou o lider com lance de {int} reais', function (amount) {
   this.wallet = { user_id: this.bidderId, balance_total: 1000, balance_pledged: amount };
   this.highestBid = { bidder_id: this.bidderId, amount, hash: 'a'.repeat(64) };

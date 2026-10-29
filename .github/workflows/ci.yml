@@ -24,6 +24,8 @@ jobs:
         run: npm ci
       - name: Testar backend (Jest e Cucumber)
         run: npm test --workspace=backend
+      - name: Testar frontend (Vitest)
+        run: npm test --workspace=frontend
       - name: Validar lint do frontend
         run: npm run lint --workspace=frontend
       - name: Construir frontend

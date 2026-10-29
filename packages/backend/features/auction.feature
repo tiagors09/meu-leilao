@@ -23,6 +23,12 @@ Funcionalidade: Disputas de leilao e saldo da carteira
     Quando dou um lance de 90 reais
     Entao o lance deve ser rejeitado por valor abaixo do minimo
 
+  Cenario: Rejeitar lance sem saldo disponivel
+    Dado que o lote ao vivo tem preco inicial de 100 reais e incremento minimo de 10 reais
+    E que minha carteira possui saldo total de 50 reais e nenhum valor comprometido
+    Quando dou um lance de 100 reais
+    Entao o lance deve ser rejeitado por saldo insuficiente
+
   Cenario: Impedir que o lider cubra o proprio lance
     Dado que o lote ao vivo tem preco inicial de 100 reais e incremento minimo de 10 reais
     E que eu sou o lider com lance de 120 reais

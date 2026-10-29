@@ -1,5 +1,7 @@
 import cors from 'cors';
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.js';
 import { createAuctionLotRoutes } from './routes/auctionLotRoutes.js';
 import { createItemRoutes } from './routes/itemRoutes.js';
 import { createUserRoutes } from './routes/userRoutes.js';
@@ -21,6 +23,8 @@ export function createApp({
 
   app.use(cors());
   app.use(express.json());
+  app.get('/api-docs.json', (request, response) => response.json(swaggerSpec));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use('/api/users', createUserRoutes({ userController }));
   app.use('/api/external-items', createItemRoutes({ itemController }));
   app.use(

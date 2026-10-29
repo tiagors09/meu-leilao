@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 07 preparado e validado localmente (seeds, testes, CI e Docker).
-- Ultimo commit realizado: `docs(monorepo): conclui documentacao do passo 07`.
+- Ultima funcionalidade concluida: Swagger e suite automatizada de backend/frontend implementados e validados.
+- Ultimo commit realizado: `test(qa): adiciona testes unitarios, gherkin, regressao e swagger`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -53,3 +53,14 @@
 - `packages/backend/Dockerfile` usa contexto de build na raiz (`docker build -f packages/backend/Dockerfile .`), instala apenas dependencias de runtime e inicia via `npm run start`; backend respeita `PORT` e escuta em `0.0.0.0`.
 - Validacoes locais do passo 07: seed executado duas vezes, testes Jest (10) e Cucumber (4 cenarios) aprovados, lint e build frontend aprovados, imagem Docker construida com contexto raiz.
 - Deploy publico no GitHub/Render nao foi realizado: requer conectar/provisionar recursos na conta Render e configurar variaveis e dominios do ambiente.
+
+## Documentacao da API e Suite QA
+- Swagger UI publicado em `/api-docs/` e definicao OpenAPI em `/api-docs.json`; endpoints de autenticacao, carteira, lotes, lances, auditoria e recibos incluem modelos de dados, respostas e JWT Bearer.
+- `swagger-jsdoc` agrega a definicao OpenAPI e `swagger-ui-express` disponibiliza a interface. `packages/backend/README.md` registra URLs e comandos de validacao.
+- Jest cobre lances, reservas/liberacao de saldo, lideranca, auditoria SHA-256, recibos e paths OpenAPI: 11 testes aprovados.
+- Cucumber cobre deposito, lance valido, reserva, minimo, saldo insuficiente e regra do lider: 5 cenarios/21 passos aprovados.
+- Vitest e Testing Library cobrem ViewModels de autenticacao, vitrine, lote/polling, carteira, auditoria e painel do leiloeiro, contratos Specs, cliente Axios e cor condicional de lideranca: 15 testes aprovados em 9 arquivos.
+- `npm test --workspace=backend`, `npm test --workspace=frontend`, lint e build frontend aprovados apos a suite QA.
+- CI inclui os testes Vitest do frontend. A UI do Swagger foi ligada no Express; validacao HTTP local do endpoint foi limitada pelo sandbox, enquanto o contrato gerado e testado pelo Jest.
+- Comandos principais: `npm test --workspace=backend` (Jest + Cucumber) e `npm run test:frontend` (Vitest + lint + build).
+- Commits da camada de qualidade/documentacao: `test(qa): adiciona testes unitarios, gherkin, regressao e swagger`.
