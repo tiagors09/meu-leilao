@@ -3,12 +3,15 @@ import { Router } from 'express';
 export function createAuctionLotRoutes({
   auctionLotController,
   bidController,
+  auditController,
+  receiptController,
   authenticate,
   checkRole,
 }) {
   const router = Router();
 
   router.get('/', auctionLotController.list.bind(auctionLotController));
+  router.get('/:id/audit', auditController.auditLot.bind(auditController));
   router.post(
     '/',
     authenticate,
@@ -20,6 +23,12 @@ export function createAuctionLotRoutes({
     authenticate,
     checkRole(['LICITANTE']),
     bidController.place.bind(bidController),
+  );
+  router.post(
+    '/:id/close',
+    authenticate,
+    checkRole(['LEILOEIRO', 'ADMIN']),
+    receiptController.closeLot.bind(receiptController),
   );
 
   return router;

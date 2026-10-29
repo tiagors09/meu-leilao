@@ -4,6 +4,7 @@ import { createAuctionLotRoutes } from './routes/auctionLotRoutes.js';
 import { createItemRoutes } from './routes/itemRoutes.js';
 import { createUserRoutes } from './routes/userRoutes.js';
 import { createWalletRoutes } from './routes/walletRoutes.js';
+import { createReceiptRoutes } from './routes/receiptRoutes.js';
 
 export function createApp({
   userController,
@@ -11,6 +12,8 @@ export function createApp({
   itemController,
   auctionLotController,
   bidController,
+  auditController,
+  receiptController,
   authenticate,
   checkRole,
 }) {
@@ -25,6 +28,8 @@ export function createApp({
     createAuctionLotRoutes({
       auctionLotController,
       bidController,
+      auditController,
+      receiptController,
       authenticate,
       checkRole,
     }),
@@ -33,6 +38,7 @@ export function createApp({
     '/api/wallets',
     createWalletRoutes({ walletController, authenticate, checkRole }),
   );
+  app.use('/api/receipts', createReceiptRoutes({ receiptController, authenticate, checkRole }));
 
   app.use((error, request, response, next) => {
     if (response.headersSent) {

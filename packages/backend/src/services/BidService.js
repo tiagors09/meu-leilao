@@ -82,7 +82,7 @@ export class BidService {
         bidderId: parsedBidderId,
         amount: amountText,
         createdAt: now,
-        previousHash: highestBid?.hash ?? ZERO_HASH,
+        previousHash: transaction.latestBid?.hash ?? ZERO_HASH,
       });
 
       const remainingMs = endTime.getTime() - now.getTime();

@@ -33,10 +33,17 @@ export class BidRepository {
           [lotId],
         )
         : { rows: [] };
+      const latestBidResult = lot
+        ? await client.query(
+          `SELECT hash FROM bids WHERE lot_id = $1 ORDER BY id DESC LIMIT 1`,
+          [lotId],
+        )
+        : { rows: [] };
 
       const transaction = {
         lot,
         highestBid: highestBidResult.rows[0] ?? null,
+        latestBid: latestBidResult.rows[0] ?? null,
         getWalletsForUpdate: async (userIds) => {
           const result = await client.query(
             `SELECT user_id, balance_total, balance_pledged

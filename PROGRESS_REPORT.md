@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 04 implementado com validacao transacional de lances, saldo comprometido, devolucao ao lider anterior e prorrogacao anti-sniping.
-- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 04`.
+- Ultima funcionalidade concluida: passo 05 implementado com auditoria publica, encerramento transacional/liquidacao, recibos privados e compartilhaveis.
+- Ultimo commit realizado: `feat(backend): implementa auditoria e liquidacao de lotes`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -28,6 +28,14 @@
 - `BidService({ bidRepository, clock })` valida status/horario, lance minimo, lider atual e saldo disponivel; prorroga o lote em dois minutos se faltarem menos de dois minutos.
 - `BidController` recebe `BidService`; `POST /api/lots/:id/bids` exige JWT e papel `LICITANTE`.
 - Cada lance grava `previous_hash` e SHA-256 para satisfazer o schema e encadear os registros; verificacao publica da cadeia e liquidacao ficam para o passo 05.
+- `AuditRepository(database)` lista os lances por ordem de insercao; `AuditService({ auditRepository })` valida sequencialmente `previous_hash` e SHA-256, expondo apenas identificador anonimizado do licitante.
+- Auditoria publica em `GET /api/lots/:id/audit`, com validacao individual dos elos e flags `is_valid`/`is_tampered`.
+- `ReceiptRepository(database)` encerra o lote em transacao, liquida o valor do vencedor para o leiloeiro, registra vencedor e recibo com UUID e trata repeticao do encerramento de forma idempotente.
+- `ReceiptService({ receiptRepository })` e controller injetado; fechamento protegido em `POST /api/lots/:id/close` para `LEILOEIRO`/`ADMIN`, recibos do proprio licitante em `GET /api/receipts/me` e consulta publica do comprovante em `GET /api/receipts/:shareCode`.
+- Lotes encerrados sem lances ficam `CLOSED` sem recibo; lances anteriores ja liberam a reserva do lider anterior durante a disputa, e no encerramento o vencedor tem valor debitado do total e do comprometido.
+- Testes unitarios do servico de auditoria e recibos: `npm test --workspace=backend`.
+- Validacao do banco ponta a ponta nao foi possivel nesta execucao: `npm run smoke --workspace=backend` falhou porque o PostgreSQL configurado nao estava acessivel.
 
-## Proximo Passo Imediato
-- Implementar o passo 05: auditoria publica da cadeia SHA-256, encerramento/liquidacao de lotes e comprovantes compartilhaveis.
+## Status do MVP
+- Passos 01 a 05 concluidos: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances e auditoria/liquidacao/recibos.
+- Proximos passos do roteiro: passo 06 (frontend React/Vite) e passo 07 (seeds e deploy no Render).

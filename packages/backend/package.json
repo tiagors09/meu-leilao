@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "smoke": "node src/tests/smokeTest.js"
+    "smoke": "node src/tests/smokeTest.js",
+    "test": "node --test src/tests/auditAndReceiptTest.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
