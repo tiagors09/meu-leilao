@@ -24,4 +24,13 @@ export class AuctionLotController {
       next(error);
     }
   }
+
+  async get(request, response, next) {
+    try {
+      const lot = await this.auctionLotService.getLot(request.params.id);
+      response.status(200).json(lot);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -66,6 +66,16 @@ export class AuctionLotService {
     return this.auctionLotRepository.listLots(status ?? null);
   }
 
+  async getLot(lotId) {
+    const parsedLotId = Number(lotId);
+    if (!Number.isInteger(parsedLotId) || parsedLotId <= 0) {
+      throw this.createError('O identificador do lote e invalido.', 400);
+    }
+    const lot = await this.auctionLotRepository.findLotById(parsedLotId);
+    if (!lot) throw this.createError('Lote nao encontrado.', 404);
+    return lot;
+  }
+
   parseAmount(value, label) {
     const amountText = typeof value === 'number' ? String(value) : value;
     if (typeof amountText !== 'string' || !/^\d+(?:\.\d{1,2})?$/.test(amountText.trim())) {

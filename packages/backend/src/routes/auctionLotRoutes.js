@@ -11,6 +11,7 @@ export function createAuctionLotRoutes({
   const router = Router();
 
   router.get('/', auctionLotController.list.bind(auctionLotController));
+  router.get('/:id', auctionLotController.get.bind(auctionLotController));
   router.get('/:id/audit', auditController.auditLot.bind(auditController));
   router.post(
     '/',
