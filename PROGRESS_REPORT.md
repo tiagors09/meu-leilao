@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: health check raiz, rota favicon 204 e CSP de imagens configurados no backend.
-- Ultimo commit realizado: `fix(backend): adiciona rota raiz, favicon 204 e ajuste de csp no helmet`.
+- Ultima funcionalidade concluida: endpoints frontend-backend homologados e pagina Pug dinamica na raiz do backend.
+- Ultimo commit realizado: `feat(backend): adiciona pagina index com pug e botao para o swagger`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -70,3 +70,10 @@
 - Helmet aplica cabecalhos de seguranca e CSP com `img-src 'self' data: https:`. O Swagger UI mantem os cabecalhos Helmet, com CSP desativada somente nas rotas `/api-docs` para suportar seus scripts inline.
 - `GET /` retorna `{ status: 'online', message: 'Verzel Leilao API' }`; `GET /favicon.ico` responde 204 antes de parser JSON e rotas da API.
 - Testes Jest cobrem health check, favicon e diretiva de imagens: 14 testes aprovados; Cucumber: 5 cenarios/21 passos aprovados.
+
+## Homologacao de Endpoints e Pagina do Backend
+- `apiEndpoints` centraliza os caminhos consumidos pelo frontend e corresponde as rotas Express de usuarios, carteira, busca externa, lotes, lances, auditoria, encerramento e recibos.
+- `resolveApiBaseUrl` usa `VITE_API_URL`, remove barra final e garante um unico prefixo `/api`; em desenvolvimento sem configuracao usa `http://localhost:3000/api`, e em producao usa `/api` same-origin.
+- ViewModels extraem a mensagem `{ error }` do backend e as Views apresentam os estados de erro; testes validam mensagens, caminhos e estados.
+- A rota `GET /` renderiza `packages/backend/views/index.pug` com status, versao do package e timestamp; o link leva ao Swagger. O CSS inline usa nonce CSP.
+- Validacao: backend 16 testes Jest e 5 cenarios/21 passos Cucumber; frontend 17 testes Vitest, lint e build aprovados; `node --check packages/backend/src/index.js` aprovado.

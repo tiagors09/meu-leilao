@@ -48,11 +48,18 @@ describe('rota de favicon', () => {
       checkRole: () => (request, response, next) => next(),
     });
     const rootRoute = app._router.stack.find((layer) => layer.route?.path === '/');
-    const response = { status: jest.fn(() => response), json: jest.fn() };
+    const response = { locals: { cspNonce: 'test-nonce' }, status: jest.fn(() => response), render: jest.fn() };
 
     rootRoute.route.stack[0].handle({}, response);
 
     expect(response.status).toHaveBeenCalledWith(200);
-    expect(response.json).toHaveBeenCalledWith({ status: 'online', message: 'Verzel Leilao API' });
+    expect(response.render).toHaveBeenCalledWith('index', expect.objectContaining({
+      status: 'Online',
+      apiName: 'Verzel Leilao API',
+      version: '1.0.0',
+      docsUrl: '/api-docs/',
+      timestamp: expect.any(String),
+      cspNonce: expect.any(String),
+    }));
   });
 });

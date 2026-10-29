@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import backendPackage from '../package.json' with { type: 'json' };
 import { createApp } from './app.js';
 import { pool } from './config/db.js';
 import { UserController } from './controllers/UserController.js';
@@ -76,6 +77,7 @@ const app = createApp({
   receiptController,
   authenticate,
   checkRole,
+  appVersion: backendPackage.version,
 });
 
 app.listen(port, '0.0.0.0', () => {

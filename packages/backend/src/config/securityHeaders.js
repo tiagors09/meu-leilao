@@ -4,6 +4,7 @@ export const helmetOptions = {
   contentSecurityPolicy: {
     directives: {
       imgSrc: ["'self'", 'data:', 'https:'],
+      styleSrc: ["'self'", (request, response) => `'nonce-${response.locals.cspNonce}'`],
     },
   },
 };
