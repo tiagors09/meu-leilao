@@ -3,34 +3,41 @@ html(lang="pt-BR")
   head
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    meta(name="theme-color" content="#0b1220")
+    meta(name="theme-color" content="#f4f4f0")
     title #{apiName} | #{status}
     style(nonce=cspNonce).
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0b1220; color: #eef2ff; }
+      :root { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; color: #000; background: #f4f4f0; font-synthesis: none; }
       * { box-sizing: border-box; }
-      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at top, #172554 0, #0b1220 52%); }
-      main { width: min(100%, 620px); padding: clamp(28px, 7vw, 56px); border: 1px solid #273449; border-radius: 24px; background: rgba(15, 23, 42, .92); box-shadow: 0 24px 80px rgba(0, 0, 0, .35); }
-      .brand { margin: 0 0 32px; color: #a5b4fc; font-size: .8rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
-      h1 { margin: 0; font-size: clamp(2rem, 7vw, 3.3rem); letter-spacing: -.05em; line-height: 1.05; }
-      .status { display: inline-flex; align-items: center; gap: 10px; margin-top: 22px; padding: 9px 14px; border: 1px solid #166534; border-radius: 999px; background: #052e16; color: #86efac; font-weight: 750; }
-      .dot { width: 9px; height: 9px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 14px #4ade80; }
-      .message { margin: 20px 0 28px; color: #bac5d8; line-height: 1.65; }
-      dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 30px; }
-      dl div { min-width: 0; padding: 15px; border: 1px solid #273449; border-radius: 14px; background: #111c2e; }
-      dt { color: #94a3b8; font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-      dd { margin: 7px 0 0; overflow-wrap: anywhere; color: #e2e8f0; font-size: .9rem; font-weight: 650; }
-      .docs { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; padding: 12px 18px; border-radius: 12px; background: #818cf8; color: #0b1220; font-weight: 850; text-decoration: none; transition: background .15s ease, transform .15s ease; }
-      .docs:hover { transform: translateY(-2px); background: #a5b4fc; }
-      .docs:focus-visible { outline: 3px solid white; outline-offset: 4px; }
-      @media (max-width: 420px) { body { padding: 14px; } dl { grid-template-columns: 1fr; } }
+      body { min-height: 100vh; margin: 0; padding: 28px; display: grid; place-items: center; background: #f4f4f0; }
+      main { width: min(100%, 720px); padding: clamp(22px, 5vw, 42px); border: 3px solid #000; background: #fff; box-shadow: 9px 9px 0 #000; }
+      .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 3px solid #000; }
+      .brand { margin: 0; font-size: .78rem; font-weight: 900; letter-spacing: .08em; }
+      .status { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 7px 11px; border: 3px solid #000; background: #76ff03; font-size: .78rem; font-weight: 900; }
+      .dot { width: 10px; height: 10px; border: 2px solid #000; border-radius: 50%; background: #000; animation: pulse 1.4s steps(2, jump-none) infinite; }
+      h1 { max-width: 12ch; margin: 34px 0 14px; font-family: Inter, Arial, sans-serif; font-size: clamp(2.8rem, 10vw, 5.8rem); font-weight: 950; letter-spacing: -.075em; line-height: .92; text-transform: uppercase; }
+      .message { max-width: 54ch; margin: 0 0 30px; font-size: .92rem; font-weight: 650; line-height: 1.65; }
+      dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 26px; }
+      dl div { min-width: 0; padding: 14px; border: 3px solid #000; background: #fff; }
+      dl div:nth-child(2) { background: #ffde59; }
+      dt { font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+      dd { margin: 9px 0 0; overflow-wrap: anywhere; font-size: .94rem; font-weight: 750; }
+      .docs { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 18px; border: 3px solid #000; background: #ffde59; box-shadow: 5px 5px 0 #000; color: #000; font-weight: 950; text-decoration: none; transition: transform .08s linear, box-shadow .08s linear; }
+      .docs:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+      .docs:active { transform: translate(5px, 5px); box-shadow: 0 0 0 #000; }
+      .docs:focus-visible { outline: 3px dashed #000; outline-offset: 6px; }
+      .arrow { font-size: 1.4rem; }
+      @keyframes pulse { 50% { background: #76ff03; } }
+      @media (max-width: 480px) { body { padding: 18px; } .topline { align-items: flex-start; flex-direction: column; } dl { grid-template-columns: 1fr; } }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   body
     main
-      p.brand VERZEL LEILAO API
+      header.topline
+        p.brand VERZEL / LEILAO API
+        p.status(role="status")
+          span.dot(aria-hidden="true")
+          span= status.toUpperCase()
       h1 API Online 🚀
-      p.status(role="status")
-        span.dot(aria-hidden="true")
-        span= status
-      p.message Servicos ativos. Consulte a documentacao para explorar os endpoints disponiveis.
+      p.message Plataforma de leiloes ativa. Consulte os endpoints, modelos e codigos de resposta na documentacao tecnica.
       dl
         div
           dt Aplicacao
@@ -39,10 +46,12 @@ html(lang="pt-BR")
           dt Versao
           dd= version
         div
-          dt Framework
+          dt Runtime
           dd Node.js + Express
         div
-          dt Verificado em
+          dt Verificado em (UTC)
           dd
             time(datetime=timestamp)= timestamp
-      a.docs(href=docsUrl) Abrir documentacao Swagger
+      a.docs(href=docsUrl)
+        span Abrir documentacao Swagger
+        span.arrow(aria-hidden="true") ↗
