@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: Swagger e suite automatizada de backend/frontend implementados e validados.
-- Ultimo commit realizado: `test(qa): adiciona testes unitarios, gherkin, regressao e swagger`.
+- Ultima funcionalidade concluida: rota `/favicon.ico` com resposta 204 e suite backend validada.
+- Ultimo commit realizado: `fix(backend): responde favicon com status 204`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -64,3 +64,8 @@
 - CI inclui os testes Vitest do frontend. A UI do Swagger foi ligada no Express; validacao HTTP local do endpoint foi limitada pelo sandbox, enquanto o contrato gerado e testado pelo Jest.
 - Comandos principais: `npm test --workspace=backend` (Jest + Cucumber) e `npm run test:frontend` (Vitest + lint + build).
 - Commits da camada de qualidade/documentacao: `test(qa): adiciona testes unitarios, gherkin, regressao e swagger`.
+
+## Seguranca e navegadores
+- `GET /favicon.ico` responde diretamente com HTTP 204 antes do parser JSON e das rotas da API.
+- O backend nao utiliza Helmet nem define Content Security Policy propria; nao foi adicionada uma diretiva CSP sem um middleware CSP ativo. A rota de favicon tem teste Jest para status e encerramento sem corpo.
+- Testes backend apos a correcao: 12 testes Jest e 5 cenarios Cucumber aprovados.

@@ -22,6 +22,7 @@ export function createApp({
   const app = express();
 
   app.use(cors());
+  app.get('/favicon.ico', (request, response) => response.status(204).end());
   app.use(express.json());
   app.get('/api-docs.json', (request, response) => response.json(swaggerSpec));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
