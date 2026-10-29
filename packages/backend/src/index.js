@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import backendPackage from '../package.json' with { type: 'json' };
 import { createApp } from './app.js';
-import { pool } from './config/db.js';
+import { initializeDatabase, pool } from './config/db.js';
 import { UserController } from './controllers/UserController.js';
 import { WalletController } from './controllers/WalletController.js';
 import { BidController } from './controllers/BidController.js';
@@ -80,6 +80,13 @@ const app = createApp({
   appVersion: backendPackage.version,
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Servidor iniciado na porta ${port}.`);
-});
+try {
+  await initializeDatabase(pool);
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Servidor iniciado na porta ${port}.`);
+  });
+} catch (error) {
+  console.error('Falha ao inicializar o banco de dados:', error.message);
+  await pool.end();
+  process.exitCode = 1;
+}

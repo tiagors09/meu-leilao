@@ -82,3 +82,8 @@
 - `render.yaml` configura o Static Site do frontend com rewrite `/*` para `/index.html`, fazendo `/leiloeiro`, `/lote/:id`, `/carteira` e `/auditoria/:id` chegarem ao React Router quando acessadas diretamente ou atualizadas.
 - O Blueprint executa o build do workspace frontend e publica `packages/frontend/dist`; `VITE_API_URL` deve ser informado com o endereco publico do backend terminado em `/api`.
 - `docs/passo_07_seeds_e_deploy_no_render.md` atualizado com as instrucoes de fallback.
+
+## Inicializacao Automatica do Banco
+- No boot, o backend aplica `src/config/init.sql` em uma transacao antes de iniciar o listener HTTP; um advisory lock serializa a criacao do schema entre instancias.
+- `npm run start --workspace=backend` executa diretamente `node src/index.js`, sem depender de um script migrate inexistente ou de uma etapa manual.
+- Testes unitarios cobrem sucesso, rollback em falha e liberacao da conexao.

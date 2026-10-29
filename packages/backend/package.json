@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "npm run migrate && node src/index.js",
+    "start": "node src/index.js",
     "smoke": "node src/tests/smokeTest.js",
     "seed": "node src/seeds.js",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
