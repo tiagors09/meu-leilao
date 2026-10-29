@@ -1,16 +1,17 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import SiteLayout from './components/SiteLayout'
-import AuctionPage from './pages/AuctionPage'
-import AuditPage from './pages/AuditPage'
-import LotPage from './pages/LotPage'
-import SellerPage from './pages/SellerPage'
-import WalletPage from './pages/WalletPage'
+import AuctionPage from './features/auction/AuctionPage'
+import AuditPage from './features/audit/AuditPage'
+import LotPage from './features/lot/LotPage'
+import SellerPage from './features/seller/SellerPage'
+import WalletPage from './features/wallet/WalletPage'
+import { Card, RouteLink } from './design-system'
 
-function AppRoutes() {
-  return <Routes><Route element={<SiteLayout />}><Route index element={<AuctionPage />} /><Route path="/leiloeiro" element={<SellerPage />} /><Route path="/lote/:id" element={<LotPage />} /><Route path="/carteira" element={<WalletPage />} /><Route path="/auditoria/:id" element={<AuditPage />} /><Route path="*" element={<div className="rounded-3xl bg-white p-12 text-center"><h1 className="text-3xl font-black">Pagina nao encontrada</h1><a className="mt-4 inline-block font-bold text-amber-700" href="/">Voltar para a vitrine</a></div>} /></Route></Routes>
+function NotFoundView() {
+  return <Card tone="pink" className="py-12 text-center"><h1 className="text-3xl font-black">Pagina nao encontrada</h1><RouteLink to="/" className="mt-4 inline-block font-black underline">Voltar para a vitrine</RouteLink></Card>
 }
 
 export default function App() {
-  return <AuthProvider><BrowserRouter><AppRoutes /></BrowserRouter></AuthProvider>
+  return <AuthProvider><BrowserRouter><Routes><Route element={<SiteLayout />}><Route index element={<AuctionPage />} /><Route path="/leiloeiro" element={<SellerPage />} /><Route path="/lote/:id" element={<LotPage />} /><Route path="/carteira" element={<WalletPage />} /><Route path="/auditoria/:id" element={<AuditPage />} /><Route path="*" element={<NotFoundView />} /></Route></Routes></BrowserRouter></AuthProvider>
 }

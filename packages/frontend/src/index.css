@@ -7,12 +7,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-optical-sizing: auto;
-  background: #f7f6f2;
-  color: #0f172a;
+  background: #FDFBF7;
+  color: #111111;
 }
 
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button, input { font: inherit; }
 button { cursor: pointer; }
-::selection { background: #fcd34d; color: #0f172a; }
+::selection { background: #DDD6FE; color: #111111; }
