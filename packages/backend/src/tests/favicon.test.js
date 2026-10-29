@@ -8,6 +8,7 @@ describe('rota de favicon', () => {
       register: noop, login: noop, getBalance: noop, deposit: noop, search: noop,
       create: noop, list: noop, get: noop, place: noop, auditLot: noop,
       closeLot: noop, listMine: noop, getShared: noop,
+      getOverview: noop, listUsers: noop, updateUserRole: noop, listLots: noop, listTransactions: noop,
     };
     const app = createApp({
       userController: controller,
@@ -17,6 +18,7 @@ describe('rota de favicon', () => {
       bidController: controller,
       auditController: controller,
       receiptController: controller,
+      adminController: controller,
       authenticate: (request, response, next) => next(),
       checkRole: () => (request, response, next) => next(),
     });
@@ -35,6 +37,7 @@ describe('rota de favicon', () => {
       register: noop, login: noop, getBalance: noop, deposit: noop, search: noop,
       create: noop, list: noop, get: noop, place: noop, auditLot: noop,
       closeLot: noop, listMine: noop, getShared: noop,
+      getOverview: noop, listUsers: noop, updateUserRole: noop, listLots: noop, listTransactions: noop,
     };
     const app = createApp({
       userController: controller,
@@ -44,6 +47,7 @@ describe('rota de favicon', () => {
       bidController: controller,
       auditController: controller,
       receiptController: controller,
+      adminController: controller,
       authenticate: (request, response, next) => next(),
       checkRole: () => (request, response, next) => next(),
     });

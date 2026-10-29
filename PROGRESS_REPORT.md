@@ -92,4 +92,12 @@
 - README raiz atualizado com arquitetura, setup, deploy, perfis, credenciais de seed, limitacoes e roadmap.
 - READMEs do backend e frontend documentam rotas, configuracao, schema no boot, Swagger/Pug, MVVM, consumo de API e fallback SPA.
 - `DEVELOPMENT_LOG.md` resume a linha do tempo a partir dos hashes e assuntos reais do Git; incidentes Render sem commit identificador estao marcados como relato, nao como fato deduzido do historico.
-- Riscos explicitados: atribuicao de papel privilegiado pelo cadastro, CORS aberto por padrao, ausencia de migracoes versionadas e polling em vez de push.
+- Riscos explicitados: CORS aberto por padrao, ausencia de migracoes versionadas e polling em vez de push.
+
+## Painel Administrativo
+- Rota `/admin` protegida no cliente por papel `ADMIN`, com aviso visual para visitantes/usuarios sem permissao e ErrorBoundary para erros de renderizacao.
+- Painel React usa `useReducer` para estado, `useMemo` para filtragem e callbacks estaveis para consultas e mutacoes; oferece metricas, usuarios paginados com alteracao de papel, lotes com contagem de lances e fechamento, e recibos/liquidacoes.
+- API administrativa em `/api/admin` protege metricas, usuarios, atualizacao de papel, lotes e transacoes com JWT + `ADMIN`; busca e paginacao sao validadas no backend.
+- Cadastro publico agora sempre cria `LICITANTE`. Alteracoes de papel sao verificadas no banco pelo middleware de autenticacao; autoalteracao e remocao do ultimo administrador sao impedidas.
+- `/admin` fica sob `BrowserRouter`; Render mantem rewrite `/* -> /index.html` e `public/_redirects` atende hosts estaticos compativeis.
+- Validacao final: 23 testes Jest, 5 cenarios Gherkin/21 passos, 23 testes Vitest, lint e build frontend aprovados.

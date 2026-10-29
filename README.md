@@ -36,7 +36,7 @@ Os papeis aceitos no banco e nos JWTs sao `ADMIN`, `LEILOEIRO` e `LICITANTE` (co
 
 | Perfil | Capacidades registradas no backend |
 | --- | --- |
-| `ADMIN` | Pode criar e encerrar lotes nas rotas compartilhadas com o leiloeiro. Nao existe painel administrativo separado nem operacoes gerais de configuracao implementadas. |
+| `ADMIN` | Acessa o painel de metricas, usuarios, papeis, lotes e liquidacoes; tambem pode criar e encerrar lotes. |
 | `LEILOEIRO` | Pode criar lotes e encerrar lotes. O fluxo de edicao/abertura administrativa nao esta implementado como operacao separada. |
 | `LICITANTE` | Pode consultar carteira, fazer deposito simulado, enviar lances e consultar recibos proprios. A auditoria publica e a consulta de recibo por codigo nao exigem login. |
 
@@ -48,16 +48,16 @@ Ao executar as seeds, ficam disponiveis estas contas locais de demonstracao:
 | `cliente1@verzel.com` | `LICITANTE` | `123456` | R$ 5.000,00 |
 | `cliente2@verzel.com` | `LICITANTE` | `123456` | R$ 5.000,00 |
 
-As credenciais sao publicas e exclusivas para desenvolvimento/demonstracao. O endpoint de registro cria `LICITANTE` por padrao e exige senha de pelo menos 8 caracteres. **Ponto de seguranca:** atualmente o payload de registro tambem aceita `role` enviado pelo cliente, inclusive `ADMIN` e `LEILOEIRO`. Nao exponha essa API publicamente sem restringir a criacao de papeis privilegiados a um fluxo administrativo confiavel.
+As credenciais sao publicas e exclusivas para desenvolvimento/demonstracao. O endpoint de registro cria somente `LICITANTE` e exige senha de pelo menos 8 caracteres. A atribuicao de `ADMIN` ou `LEILOEIRO` ocorre pelo painel autenticado como `ADMIN`; o primeiro administrador precisa ser provisionado diretamente no banco por um operador confiavel.
 
-Para testar o papel `ADMIN` apenas em uma instancia local controlada, pode-se registrar um usuario normal e promover a conta diretamente no banco:
+Para criar o primeiro administrador de teste em uma instancia local controlada, promova uma conta existente diretamente no banco (o exemplo usa o primeiro licitante semeado):
 
 ```bash
 docker compose exec postgres psql -U postgres -d leilao_db \
-  -c "UPDATE users SET role = 'ADMIN' WHERE email = 'admin-local@verzel.test';"
+  -c "UPDATE users SET role = 'ADMIN' WHERE email = 'cliente1@verzel.com';"
 ```
 
-Faca login novamente depois da alteracao para receber um JWT com o novo papel. Nao use essa conta nem os dados de seed em producao.
+Faca login novamente com `cliente1@verzel.com` depois da alteracao. O backend consulta o papel atual no banco em requisicoes autenticadas. Nao use essa conta nem os dados de seed em producao.
 
 ## Analise sincera
 
@@ -69,13 +69,15 @@ Faca login novamente depois da alteracao para receber um JWT com o novo papel. N
 - Fechamento e liquidacao do lote, recibos e verificacao publica da cadeia de hashes.
 - Swagger interativo em `/api-docs/` e especificacao JSON em `/api-docs.json`.
 - Pagina de status do backend renderizada por Pug com visual Neubrutalista.
+- Painel administrativo `/admin` com metricas, usuarios/papeis, lotes, lances e recibos; endpoints protegidos no servidor.
 - Schema aplicado antes de abrir o listener HTTP, usando `CREATE TABLE IF NOT EXISTS` e lock consultivo.
 - Fallback do Render `/* -> /index.html` para as rotas do React Router.
 - Testes Jest/Cucumber no backend, Vitest no frontend e workflow CI com lint/build.
 
 ### Pontos de atencao e limitacoes
 
-- O cadastro permite que o proprio cliente escolha papel privilegiado; isso e uma falha de autorizacao que precisa ser corrigida antes de qualquer deploy publico.
+- O primeiro administrador ainda exige provisionamento direto no banco. Depois, os papeis podem ser gerenciados no painel protegido.
+- A autorizacao consulta o papel atual no banco em cada requisicao protegida para aplicar alteracoes de cargo imediatamente; isso adiciona uma leitura por requisicao e pode ser otimizado com cache/revogacao de tokens em uma etapa futura.
 - A rotina automatica cria objetos ausentes do schema atual, mas nao e um sistema de migracoes versionadas: alteracoes futuras em tabelas existentes exigem uma estrategia de migracao.
 - A sala usa polling de 3 segundos. Nao oferece latencia/entrega em tempo real por WebSocket ou SSE.
 - Validacoes existem em varios services, mas ainda falta uma politica uniforme e estrita para todo payload, limites, normalizacao e erros do banco.
@@ -86,7 +88,7 @@ Faca login novamente depois da alteracao para receber um JWT com o novo papel. N
 
 ### Roadmap sugerido
 
-1. Bloquear atribuicao de `ADMIN`/`LEILOEIRO` no cadastro publico e adicionar testes de autorizacao.
+1. Criar um fluxo controlado de provisionamento do primeiro administrador sem acesso manual ao banco.
 2. Introduzir migracoes versionadas e validacao de payload padronizada (por exemplo, schemas na borda HTTP).
 3. Implementar WebSockets ou Socket.IO para atualizacao de lances ao vivo e revisar escala/concorrencia.
 4. Adicionar upload de imagens para S3/Cloudinary, com validacao e politica de acesso.

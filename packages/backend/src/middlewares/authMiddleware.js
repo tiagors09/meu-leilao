@@ -1,9 +1,9 @@
-export function createAuthMiddleware({ tokenVerifier, jwtSecret }) {
-  if (!tokenVerifier || !jwtSecret) {
+export function createAuthMiddleware({ tokenVerifier, jwtSecret, userRepository }) {
+  if (!tokenVerifier || !jwtSecret || !userRepository) {
     throw new Error('As dependencias de autenticacao sao obrigatorias.');
   }
 
-  return function authenticate(request, response, next) {
+  return async function authenticate(request, response, next) {
     const authorization = request.headers.authorization;
     const [scheme, token] = authorization?.split(' ') ?? [];
 
@@ -13,18 +13,28 @@ export function createAuthMiddleware({ tokenVerifier, jwtSecret }) {
       }));
     }
 
+    let payload;
     try {
-      const payload = tokenVerifier.verify(token, jwtSecret);
-      if (!payload.id || !payload.role) {
-        throw new Error('Token invalido.');
-      }
-
-      request.user = { id: payload.id, role: payload.role };
-      return next();
+      payload = tokenVerifier.verify(token, jwtSecret);
     } catch {
       return next(Object.assign(new Error('Token invalido ou expirado.'), {
         statusCode: 401,
       }));
+    }
+
+    if (!payload.id) {
+      return next(Object.assign(new Error('Token invalido ou expirado.'), { statusCode: 401 }));
+    }
+
+    try {
+      const user = await userRepository.findById(payload.id);
+      if (!user) {
+        return next(Object.assign(new Error('Token invalido ou expirado.'), { statusCode: 401 }));
+      }
+      request.user = { id: user.id, role: user.role };
+      return next();
+    } catch (error) {
+      return next(error);
     }
   };
 }

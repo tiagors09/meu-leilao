@@ -21,6 +21,13 @@ export const apiEndpoints = Object.freeze({
     close: (id) => `/lots/${id}/close`,
   }),
   receipts: Object.freeze({ me: '/receipts/me' }),
+  admin: Object.freeze({
+    overview: '/admin/overview',
+    users: '/admin/users',
+    userRole: (id) => `/admin/users/${id}/role`,
+    lots: '/admin/lots',
+    transactions: '/admin/transactions',
+  }),
 })
 
 const api = axios.create({

@@ -52,7 +52,21 @@ O prefixo `/api` nao se aplica a `GET /` (pagina Pug de status), `GET /favicon.i
 
 ### Papeis e seguranca
 
-O banco aceita `ADMIN`, `LEILOEIRO` e `LICITANTE`. As rotas de criacao/encerramento de lotes aceitam leiloeiro e admin; nao existe painel de configuracao administrativa dedicado. O registro aceita `role` opcional vindo do payload, inclusive papeis privilegiados. Isso e um risco de escalacao de privilegio: restrinja a criacao de papeis antes de disponibilizar a API publicamente. A conta de seed `leiloeiro@verzel.com` e para testes locais; nao ha admin seed.
+O banco aceita `ADMIN`, `LEILOEIRO` e `LICITANTE`. O registro publico sempre cria `LICITANTE`; apenas um usuario `ADMIN` autenticado pode alterar papeis. A criacao do primeiro admin requer provisionamento direto no banco por um operador confiavel. As rotas de criacao/encerramento de lotes aceitam leiloeiro e admin; a conta de seed `leiloeiro@verzel.com` e para testes locais e nao ha admin seed.
+
+### API administrativa
+
+Todas as rotas abaixo exigem JWT e papel `ADMIN` atual no banco. Listagens aceitam paginacao (`page`, `pageSize`, maximo 100); usuarios e lotes aceitam `search`.
+
+| Metodo | Rota | Funcao |
+| --- | --- | --- |
+| `GET` | `/api/admin/overview` | Contagem de usuarios/papeis/lotes/lances/recibos e valor liquidado. |
+| `GET` | `/api/admin/users` | Lista usuarios e saldos de carteira. |
+| `PATCH` | `/api/admin/users/:id/role` | Altera para `ADMIN`, `LEILOEIRO` ou `LICITANTE`; impede autoalteracao e remocao do ultimo admin. |
+| `GET` | `/api/admin/lots` | Lista lotes, contagem de lances, maior lance e lider. |
+| `GET` | `/api/admin/transactions` | Lista recibos/liquidacoes com paginacao. |
+
+O middleware busca o papel atual no banco em cada requisicao autenticada, de modo que mudancas de papel tenham efeito sem aguardar o JWT expirar. Isso acrescenta uma consulta ao banco por requisicao protegida.
 
 ## Swagger e pagina Pug
 

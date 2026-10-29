@@ -10,6 +10,7 @@ import { createItemRoutes } from './routes/itemRoutes.js';
 import { createUserRoutes } from './routes/userRoutes.js';
 import { createWalletRoutes } from './routes/walletRoutes.js';
 import { createReceiptRoutes } from './routes/receiptRoutes.js';
+import { createAdminRoutes } from './routes/adminRoutes.js';
 
 export function createApp({
   userController,
@@ -19,6 +20,7 @@ export function createApp({
   bidController,
   auditController,
   receiptController,
+  adminController,
   authenticate,
   checkRole,
   appVersion = '1.0.0',
@@ -66,6 +68,7 @@ export function createApp({
     createWalletRoutes({ walletController, authenticate, checkRole }),
   );
   app.use('/api/receipts', createReceiptRoutes({ receiptController, authenticate, checkRole }));
+  app.use('/api/admin', createAdminRoutes({ adminController, authenticate, checkRole }));
 
   app.use((error, request, response, next) => {
     if (response.headersSent) {

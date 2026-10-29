@@ -18,6 +18,14 @@ export class UserRepository {
     return result.rows[0] ?? null;
   }
 
+  async findById(userId) {
+    const result = await this.database.query(
+      'SELECT id, role FROM users WHERE id = $1',
+      [userId],
+    );
+    return result.rows[0] ?? null;
+  }
+
   async createUser({ name, email, passwordHash, role }) {
     const client = await this.database.connect();
 

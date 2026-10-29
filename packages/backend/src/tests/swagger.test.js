@@ -6,6 +6,7 @@ describe('documentacao OpenAPI', () => {
     const expectedPaths = [
       '/api/users/register', '/api/users/login', '/api/wallets/me', '/api/wallets/deposit',
       '/api/lots', '/api/lots/{id}', '/api/lots/{id}/bids', '/api/lots/{id}/audit', '/api/receipts/me',
+      '/api/admin/overview', '/api/admin/users', '/api/admin/users/{id}/role', '/api/admin/lots', '/api/admin/transactions',
     ];
 
     for (const path of expectedPaths) expect(swaggerSpec.paths[path]).toBeDefined();

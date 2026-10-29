@@ -1,5 +1,3 @@
-const ALLOWED_ROLES = new Set(['ADMIN', 'LEILOEIRO', 'LICITANTE']);
-
 export class UserService {
   constructor({ userRepository, passwordHasher, tokenSigner, jwtSecret }) {
     if (!userRepository || !passwordHasher || !tokenSigner || !jwtSecret) {
@@ -12,7 +10,7 @@ export class UserService {
     this.jwtSecret = jwtSecret;
   }
 
-  async register({ name, email, password, role = 'LICITANTE' }) {
+  async register({ name, email, password }) {
     if (typeof name !== 'string' || typeof email !== 'string') {
       throw this.createError('Nome e email sao obrigatorios.', 400);
     }
@@ -29,9 +27,6 @@ export class UserService {
     if (typeof password !== 'string' || password.length < 8) {
       throw this.createError('A senha deve ter pelo menos 8 caracteres.', 400);
     }
-    if (!ALLOWED_ROLES.has(role)) {
-      throw this.createError('Perfil de usuario invalido.', 400);
-    }
     if (await this.userRepository.findByEmail(normalizedEmail)) {
       throw this.createError('Ja existe um usuario com este email.', 409);
     }
@@ -43,7 +38,7 @@ export class UserService {
         name: normalizedName,
         email: normalizedEmail,
         passwordHash,
-        role,
+        role: 'LICITANTE',
       });
     } catch (error) {
       if (error.code === '23505') {

@@ -31,8 +31,9 @@ O Axios injeta `Bearer` usando `leilao_token` no `localStorage`. ViewModels leem
 | `/lote/:id` | Sala do lote, lance atual, contagem regressiva, envio de lance e polling de 3 segundos |
 | `/carteira` | Saldo disponivel/comprometido/total e deposito simulado |
 | `/auditoria/:id` | Timeline publica de hashes e integridade da cadeia |
+| `/admin` | Metricas, gestao de papeis, lotes, lances e liquidacoes (somente `ADMIN`) |
 
-Rotas desconhecidas mostram uma pagina interna de 404. O host estatico precisa entregar `index.html` ao atualizar uma rota client-side; `render.yaml` configura rewrite `/* -> /index.html` para o Render. Outros provedores precisam de uma regra equivalente.
+Rotas desconhecidas mostram uma pagina interna de 404. O host estatico precisa entregar `index.html` ao atualizar uma rota client-side; `render.yaml` configura rewrite `/* -> /index.html` para o Render e `public/_redirects` atende provedores compativeis com esse formato.
 
 ## Organizacao MVVM
 
@@ -44,6 +45,8 @@ As features ficam em `src/features/<feature>/` e separam contratos, estado/regra
 - `*page.jsx`: composicao da View com seu hook.
 
 Features implementadas: `auction`, `seller`, `lot`, `wallet`, `audit` e `auth`. O Design System em `src/design-system/` exporta `Button`, `Input`, `Card`, `Badge`, `Modal`, `Navbar` e `RouteLink`. As Views usam classes utilitarias Tailwind e componentes compartilhados.
+
+O painel administrativo fica em `src/features/admin/`, usa `useReducer` para seu estado composto, `useMemo` para os filtros e `useCallback` para consultas/mutacoes. As tabelas usam paginacao do backend. Encerrar lote solicita confirmacao e chama a operacao de liquidacao ja existente.
 
 ## Testes e build
 

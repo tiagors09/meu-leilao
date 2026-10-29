@@ -25,7 +25,6 @@ export const swaggerSpec = swaggerJsdoc({
             name: { type: 'string', example: 'Maria Silva' },
             email: { type: 'string', format: 'email', example: 'maria@example.com' },
             password: { type: 'string', format: 'password', example: 'senha-segura' },
-            role: { type: 'string', enum: ['LICITANTE', 'LEILOEIRO', 'ADMIN'], default: 'LICITANTE' },
           },
         },
         Wallet: {
@@ -71,7 +70,7 @@ export const swaggerSpec = swaggerJsdoc({
     },
     tags: [
       { name: 'Autenticacao' }, { name: 'Carteira' }, { name: 'Lotes' },
-      { name: 'Lances' }, { name: 'Auditoria' }, { name: 'Recibos' },
+      { name: 'Lances' }, { name: 'Auditoria' }, { name: 'Recibos' }, { name: 'Administracao' },
     ],
   },
   apis: [fileURLToPath(new URL('../docs/*.js', import.meta.url))],

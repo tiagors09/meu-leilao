@@ -24,7 +24,7 @@ export function useAccessViewModel(onClose) {
     setError('')
     try {
       if (mode === accessModes.LOGIN) await signIn({ email: form.email, password: form.password })
-      else await signUp({ ...form, role: 'LICITANTE' })
+      else await signUp({ name: form.name, email: form.email, password: form.password })
       onClose()
     } catch (requestError) {
       setError(requestError.response?.data?.error || 'Nao foi possivel entrar agora.')

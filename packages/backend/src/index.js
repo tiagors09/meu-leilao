@@ -9,6 +9,7 @@ import { WalletController } from './controllers/WalletController.js';
 import { BidController } from './controllers/BidController.js';
 import { AuditController } from './controllers/AuditController.js';
 import { ReceiptController } from './controllers/ReceiptController.js';
+import { AdminController } from './controllers/AdminController.js';
 import { AuctionLotController } from './controllers/AuctionLotController.js';
 import { ItemController } from './controllers/ItemController.js';
 import { createAuthMiddleware, createRoleMiddleware } from './middlewares/authMiddleware.js';
@@ -18,6 +19,7 @@ import { AuditRepository } from './repositories/AuditRepository.js';
 import { ReceiptRepository } from './repositories/ReceiptRepository.js';
 import { ItemRepository } from './repositories/ItemRepository.js';
 import { UserRepository } from './repositories/UserRepository.js';
+import { AdminRepository } from './repositories/AdminRepository.js';
 import { WalletRepository } from './repositories/WalletRepository.js';
 import { AuctionLotService } from './services/AuctionLotService.js';
 import { BidService } from './services/BidService.js';
@@ -26,6 +28,7 @@ import { ReceiptService } from './services/ReceiptService.js';
 import { ItemService } from './services/ItemService.js';
 import { UserService } from './services/UserService.js';
 import { WalletService } from './services/WalletService.js';
+import { AdminService } from './services/AdminService.js';
 
 dotenv.config();
 
@@ -36,6 +39,7 @@ if (!JWT_SECRET) {
 }
 
 const userRepository = new UserRepository(pool);
+const adminRepository = new AdminRepository(pool);
 const walletRepository = new WalletRepository(pool);
 const itemRepository = new ItemRepository(pool);
 const auctionLotRepository = new AuctionLotRepository(pool);
@@ -48,6 +52,7 @@ const userService = new UserService({
   tokenSigner: jwt,
   jwtSecret: JWT_SECRET,
 });
+const adminService = new AdminService({ adminRepository });
 const walletService = new WalletService({ walletRepository });
 const itemService = new ItemService({
   itemRepository,
@@ -65,7 +70,8 @@ const auctionLotController = new AuctionLotController({ auctionLotService });
 const bidController = new BidController({ bidService });
 const auditController = new AuditController({ auditService });
 const receiptController = new ReceiptController({ receiptService });
-const authenticate = createAuthMiddleware({ tokenVerifier: jwt, jwtSecret: JWT_SECRET });
+const adminController = new AdminController({ adminService });
+const authenticate = createAuthMiddleware({ tokenVerifier: jwt, jwtSecret: JWT_SECRET, userRepository });
 const checkRole = createRoleMiddleware;
 const app = createApp({
   userController,
@@ -75,6 +81,7 @@ const app = createApp({
   bidController,
   auditController,
   receiptController,
+  adminController,
   authenticate,
   checkRole,
   appVersion: backendPackage.version,

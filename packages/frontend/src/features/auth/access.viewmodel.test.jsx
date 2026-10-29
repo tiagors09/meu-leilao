@@ -30,7 +30,7 @@ describe('useAccessViewModel', () => {
       result.current.updateField('password', 'segredo123')
     })
     await act(async () => result.current.submit({ preventDefault: vi.fn() }))
-    expect(signUp).toHaveBeenCalledWith({ name: 'Ana', email: 'ana@example.com', password: 'segredo123', role: 'LICITANTE' })
+    expect(signUp).toHaveBeenCalledWith({ name: 'Ana', email: 'ana@example.com', password: 'segredo123' })
     expect(result.current.error).toBe('Email ja cadastrado.')
     expect(onClose).not.toHaveBeenCalled()
   })
