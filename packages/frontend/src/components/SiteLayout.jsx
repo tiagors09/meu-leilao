@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from '../design-system'
 import { useAuth } from '../context/useAuth'
-import AccessView from '../features/auth/Access.View'
+import AccessView from '../features/auth/access.view'
 
 export default function SiteLayout() {
   const { user, signOut } = useAuth()

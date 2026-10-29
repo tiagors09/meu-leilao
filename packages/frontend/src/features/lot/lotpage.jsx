@@ -1,5 +1,5 @@
-import LotView from './Lot.View'
-import { useLotRouteViewModel } from './useLot.ViewModel'
+import LotView from './lot.view'
+import { useLotRouteViewModel } from './uselot.viewmodel'
 
 export default function LotPage() {
   const viewModel = useLotRouteViewModel()

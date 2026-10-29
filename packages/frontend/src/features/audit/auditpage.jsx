@@ -1,5 +1,5 @@
-import AuditView from './Audit.View'
-import { useAuditRouteViewModel } from './useAudit.ViewModel'
+import AuditView from './audit.view'
+import { useAuditRouteViewModel } from './useaudit.viewmodel'
 
 export default function AuditPage() {
   const viewModel = useAuditRouteViewModel()

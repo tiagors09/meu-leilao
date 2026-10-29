@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { accessInitialForm, accessModes } from './Auth.Specs'
+import { accessInitialForm, accessModes } from './auth.specs'
 import { useAuth } from '../../context/useAuth'
 
 export function useAccessViewModel(onClose) {

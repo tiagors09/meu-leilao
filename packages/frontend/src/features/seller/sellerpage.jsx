@@ -1,5 +1,5 @@
-import SellerView from './Seller.View'
-import { useSellerViewModel } from './useSeller.ViewModel'
+import SellerView from './seller.view'
+import { useSellerViewModel } from './useseller.viewmodel'
 
 export default function SellerPage() {
   const viewModel = useSellerViewModel()

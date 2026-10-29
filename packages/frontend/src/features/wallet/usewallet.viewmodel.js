@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/useAuth'
 import api, { getApiError, money } from '../../lib/api'
-import { walletCards, walletError } from './Wallet.Specs'
+import { walletCards, walletError } from './wallet.specs'
 
 export function useWalletViewModel() {
   const { user } = useAuth()

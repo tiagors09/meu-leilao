@@ -1,5 +1,5 @@
-import AuctionView from './Auction.View'
-import { useAuctionViewModel } from './useAuction.ViewModel'
+import AuctionView from './auction.view'
+import { useAuctionViewModel } from './useauction.viewmodel'
 
 export default function AuctionPage() {
   const viewModel = useAuctionViewModel()

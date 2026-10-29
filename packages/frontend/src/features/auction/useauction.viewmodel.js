@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import api, { getApiError } from '../../lib/api'
-import { auctionTabs } from './Auction.Specs'
+import { auctionTabs } from './auction.specs'
 import { dateTime, money } from '../../lib/api'
 
 export function useAuctionViewModel() {

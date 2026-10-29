@@ -1,11 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import SiteLayout from './components/SiteLayout'
-import AuctionPage from './features/auction/AuctionPage'
-import AuditPage from './features/audit/AuditPage'
-import LotPage from './features/lot/LotPage'
-import SellerPage from './features/seller/SellerPage'
-import WalletPage from './features/wallet/WalletPage'
+import AuctionPage from './features/auction/auctionpage.jsx'
+import AuditPage from './features/audit/auditpage.jsx'
+import LotPage from './features/lot/lotpage.jsx'
+import SellerPage from './features/seller/sellerpage.jsx'
+import WalletPage from './features/wallet/walletpage.jsx'
 import { Card, RouteLink } from './design-system'
 
 function NotFoundView() {

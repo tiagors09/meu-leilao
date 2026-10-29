@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import api, { dateTime, getApiError, money } from '../../lib/api'
-import { auditLoadError } from './Audit.Specs'
+import { auditLoadError } from './audit.specs'
 
 export function useAuditViewModel(lotId) {
   const [audit, setAudit] = useState(null)

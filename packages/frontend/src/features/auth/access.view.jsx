@@ -1,5 +1,5 @@
 import { Button, Input, Modal } from '../../design-system'
-import { useAccessViewModel } from './useAccess.ViewModel'
+import { useAccessViewModel } from './useaccess.viewmodel'
 
 export default function AccessView({ open, onClose }) {
   const vm = useAccessViewModel(onClose)

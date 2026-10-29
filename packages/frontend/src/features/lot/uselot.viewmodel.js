@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
 import api, { dateTime, getApiError, money } from '../../lib/api'
-import { DEFAULT_BID_ERROR, DEFAULT_LOT_ERROR, LOT_POLL_INTERVAL_MS } from './Lot.Specs'
+import { DEFAULT_BID_ERROR, DEFAULT_LOT_ERROR, LOT_POLL_INTERVAL_MS } from './lot.specs'
 
 function getMinimumBid(lot) {
   const current = Number(lot.current_bid?.amount ?? lot.initial_price)

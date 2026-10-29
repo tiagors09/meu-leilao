@@ -1,5 +1,5 @@
-import WalletView from './Wallet.View'
-import { useWalletViewModel } from './useWallet.ViewModel'
+import WalletView from './wallet.view'
+import { useWalletViewModel } from './usewallet.viewmodel'
 
 export default function WalletPage() {
   const viewModel = useWalletViewModel()

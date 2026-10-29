@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../../context/useAuth'
 import api, { dateTime, getApiError, money } from '../../lib/api'
-import { emptyLotForm } from './Seller.Specs'
+import { emptyLotForm } from './seller.specs'
 
 export function useSellerViewModel() {
   const { user } = useAuth()
