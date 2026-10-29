@@ -5,6 +5,11 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "seed": "npm run seed --workspace=backend",
+    "test": "npm run test --workspace=backend",
+    "test:frontend": "npm run lint --workspace=frontend && npm run build --workspace=frontend"
+  },
   "allowScripts": {
     "bcrypt@6.0.0": true
   }

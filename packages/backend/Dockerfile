@@ -1,19 +1,17 @@
-FROM node:20-alpine
+FROM node:22-alpine
+
 WORKDIR /app
 
-# Copia os arquivos de workspace da raiz e o package do backend
+# O contexto de build deve ser a raiz do monorepo.
 COPY package.json package-lock.json ./
-COPY packages/backend/package.json ./packages/backend/
-COPY packages/shared/package.json ./packages/shared/
+COPY packages/backend/package.json ./packages/backend/package.json
+COPY packages/frontend/package.json ./packages/frontend/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+RUN npm ci --omit=dev --workspace=backend --workspace=shared
 
-# Instala todas as dependências do monorepo a partir da raiz
-RUN npm install
-
-# Copia o código fonte do backend e do shared
 COPY packages/backend ./packages/backend
 COPY packages/shared ./packages/shared
 
 WORKDIR /app/packages/backend
-
 EXPOSE 3000
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]

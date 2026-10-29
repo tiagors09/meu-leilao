@@ -7,7 +7,10 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "smoke": "node src/tests/smokeTest.js",
-    "test": "node --test src/tests/auditAndReceiptTest.js"
+    "seed": "node src/seeds.js",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "test:gherkin": "cucumber-js features/auction.feature",
+    "test": "npm run test:unit && npm run test:gherkin"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -19,6 +22,8 @@
     "shared": "*"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^13.3.0",
+    "jest": "^30.5.2",
     "nodemon": "^3.1.0"
   }
 }

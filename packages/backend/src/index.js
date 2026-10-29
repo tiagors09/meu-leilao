@@ -28,7 +28,8 @@ import { WalletService } from './services/WalletService.js';
 
 dotenv.config();
 
-const { JWT_SECRET, PORT_BACKEND = 3000 } = process.env;
+const { JWT_SECRET } = process.env;
+const port = process.env.PORT_BACKEND || process.env.PORT || 3000;
 if (!JWT_SECRET) {
   throw new Error('A variavel JWT_SECRET deve ser configurada.');
 }
@@ -77,6 +78,6 @@ const app = createApp({
   checkRole,
 });
 
-app.listen(PORT_BACKEND, () => {
-  console.log(`Servidor iniciado na porta ${PORT_BACKEND}.`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Servidor iniciado na porta ${port}.`);
 });
