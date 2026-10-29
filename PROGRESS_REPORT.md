@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: rota `/favicon.ico` com resposta 204 e suite backend validada.
-- Ultimo commit realizado: `fix(backend): responde favicon com status 204`.
+- Ultima funcionalidade concluida: health check raiz, rota favicon 204 e CSP de imagens configurados no backend.
+- Ultimo commit realizado: `fix(backend): adiciona rota raiz, favicon 204 e ajuste de csp no helmet`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -67,5 +67,6 @@
 
 ## Seguranca e navegadores
 - `GET /favicon.ico` responde diretamente com HTTP 204 antes do parser JSON e das rotas da API.
-- O backend nao utiliza Helmet nem define Content Security Policy propria; nao foi adicionada uma diretiva CSP sem um middleware CSP ativo. A rota de favicon tem teste Jest para status e encerramento sem corpo.
-- Testes backend apos a correcao: 12 testes Jest e 5 cenarios Cucumber aprovados.
+- Helmet aplica cabecalhos de seguranca e CSP com `img-src 'self' data: https:`. O Swagger UI mantem os cabecalhos Helmet, com CSP desativada somente nas rotas `/api-docs` para suportar seus scripts inline.
+- `GET /` retorna `{ status: 'online', message: 'Verzel Leilao API' }`; `GET /favicon.ico` responde 204 antes de parser JSON e rotas da API.
+- Testes Jest cobrem health check, favicon e diretiva de imagens: 14 testes aprovados; Cucumber: 5 cenarios/21 passos aprovados.

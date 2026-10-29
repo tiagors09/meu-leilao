@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.js';
+import { securityHeaders, swaggerSecurityHeaders } from './config/securityHeaders.js';
 import { createAuctionLotRoutes } from './routes/auctionLotRoutes.js';
 import { createItemRoutes } from './routes/itemRoutes.js';
 import { createUserRoutes } from './routes/userRoutes.js';
@@ -24,6 +25,14 @@ export function createApp({
   app.use(cors());
   app.get('/favicon.ico', (request, response) => response.status(204).end());
   app.use(express.json());
+  app.use((request, response, next) => {
+    const isSwaggerUi = request.path === '/api-docs' || request.path.startsWith('/api-docs/');
+    return (isSwaggerUi ? swaggerSecurityHeaders : securityHeaders)(request, response, next);
+  });
+  app.get('/', (request, response) => response.status(200).json({
+    status: 'online',
+    message: 'Verzel Leilao API',
+  }));
   app.get('/api-docs.json', (request, response) => response.json(swaggerSpec));
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   app.use('/api/users', createUserRoutes({ userController }));
