@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 05 implementado com auditoria publica, encerramento transacional/liquidacao, recibos privados e compartilhaveis.
-- Ultimo commit realizado: `feat(backend): implementa auditoria e liquidacao de lotes`.
+- Ultima funcionalidade concluida: passo 06 implementado com vitrine, painel do leiloeiro, sala de lances, carteira e auditoria publica.
+- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 06`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -27,7 +27,7 @@
 - `BidRepository(database)` executa a transacao do lance, bloqueia o lote e as carteiras envolvidas, ajusta saldo comprometido e grava o lance.
 - `BidService({ bidRepository, clock })` valida status/horario, lance minimo, lider atual e saldo disponivel; prorroga o lote em dois minutos se faltarem menos de dois minutos.
 - `BidController` recebe `BidService`; `POST /api/lots/:id/bids` exige JWT e papel `LICITANTE`.
-- Cada lance grava `previous_hash` e SHA-256 para satisfazer o schema e encadear os registros; verificacao publica da cadeia e liquidacao ficam para o passo 05.
+- Cada lance grava `previous_hash` e SHA-256 para encadear os registros; verificacao publica da cadeia e liquidacao foram concluidas no passo 05.
 - `AuditRepository(database)` lista os lances por ordem de insercao; `AuditService({ auditRepository })` valida sequencialmente `previous_hash` e SHA-256, expondo apenas identificador anonimizado do licitante.
 - Auditoria publica em `GET /api/lots/:id/audit`, com validacao individual dos elos e flags `is_valid`/`is_tampered`.
 - `ReceiptRepository(database)` encerra o lote em transacao, liquida o valor do vencedor para o leiloeiro, registra vencedor e recibo com UUID e trata repeticao do encerramento de forma idempotente.
@@ -35,7 +35,12 @@
 - Lotes encerrados sem lances ficam `CLOSED` sem recibo; lances anteriores ja liberam a reserva do lider anterior durante a disputa, e no encerramento o vencedor tem valor debitado do total e do comprometido.
 - Testes unitarios do servico de auditoria e recibos: `npm test --workspace=backend`.
 - Validacao do banco ponta a ponta nao foi possivel nesta execucao: `npm run smoke --workspace=backend` falhou porque o PostgreSQL configurado nao estava acessivel.
+- Frontend em `packages/frontend` usa React Router DOM, Axios centralizado com token JWT do `localStorage` e Tailwind CSS 4 via plugin oficial do Vite.
+- Rotas de interface: `/`, `/leiloeiro`, `/lote/:id`, `/carteira` e `/auditoria/:id`; telas protegidas exibem acesso apropriado conforme a sessao e o papel recebido no JWT.
+- Vitrine com abas por status; painel do leiloeiro busca itens externos, cria lotes, lista arremate atual e permite encerrar lotes; sala consulta detalhes a cada 3s, mostra contagem regressiva e permite lances; carteira consulta saldo e deposita; auditoria publica mostra a timeline e integridade dos elos.
+- `GET /api/lots/:id` adicionado para expor os detalhes e o lance lider ao cliente da sala, incluindo imagem do item e identificador do licitante lider para o estado da disputa.
+- Verificacao frontend: `npm run lint --workspace=frontend` e `npm run build --workspace=frontend` aprovados.
 
 ## Status do MVP
-- Passos 01 a 05 concluidos: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances e auditoria/liquidacao/recibos.
-- Proximos passos do roteiro: passo 06 (frontend React/Vite) e passo 07 (seeds e deploy no Render).
+- Passos 01 a 06 concluidos: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances, auditoria/liquidacao/recibos e frontend React/Vite/Tailwind.
+- Proximo passo do roteiro: passo 07 (seeds e deploy no Render).
