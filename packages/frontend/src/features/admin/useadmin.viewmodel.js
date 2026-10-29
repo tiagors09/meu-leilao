@@ -97,6 +97,55 @@ export function useAdminViewModel() {
     }
   }, [loadLots, loadOverview, loadTransactions, state.confirmLot])
 
+  const openLotEditor = useCallback((lot = null) => {
+    const draft = lot ? {
+      item_id: String(lot.item_id ?? ''), title: lot.title ?? '',
+      initial_price: String(lot.initial_price ?? ''), min_increment: String(lot.min_increment ?? ''),
+      start_time: toLocalDateTime(lot.start_time), end_time: toLocalDateTime(lot.end_time),
+    } : { item_id: '', title: '', initial_price: '', min_increment: '', start_time: '', end_time: '' }
+    dispatch({ type: 'lot-editor-opened', lot, draft })
+  }, [])
+
+  const setLotDraft = useCallback((name, value) => dispatch({ type: 'lot-draft-changed', name, value }), [])
+  const closeLotEditor = useCallback(() => dispatch({ type: 'lot-editor-closed' }), [])
+
+  const saveLot = useCallback(async (event) => {
+    event.preventDefault()
+    const lot = state.lotEditor
+    if (!lot || !state.lotDraft) return
+    dispatch({ type: 'lot-action-started', id: lot.id || 'new' })
+    try {
+      const payload = {
+        ...state.lotDraft,
+        item_id: Number(state.lotDraft.item_id),
+        start_time: new Date(state.lotDraft.start_time).toISOString(),
+        end_time: new Date(state.lotDraft.end_time).toISOString(),
+      }
+      if (lot.id) await api.patch(apiEndpoints.admin.lot(lot.id), payload)
+      else await api.post(apiEndpoints.admin.lots, payload)
+      dispatch({ type: 'notice', message: lot.id ? 'Lote atualizado.' : 'Lote criado.' })
+      await Promise.all([loadLots(), loadOverview()])
+    } catch (error) {
+      dispatch({ type: 'request-failed', key: 'pendingLotId', message: getApiError(error, 'Nao foi possivel salvar o lote.') })
+    } finally { dispatch({ type: 'lot-action-finished' }) }
+  }, [loadLots, loadOverview, state.lotDraft, state.lotEditor])
+
+  const runLotAction = useCallback(async (lot, action) => {
+    dispatch({ type: 'lot-action-started', id: lot.id })
+    try {
+      if (action === 'open') {
+        await api.post(apiEndpoints.admin.openLot(lot.id))
+        dispatch({ type: 'notice', message: 'Lote aberto para lances.' })
+      } else {
+        await api.delete(apiEndpoints.admin.lot(lot.id))
+        dispatch({ type: 'notice', message: 'Lote removido.' })
+      }
+      await Promise.all([loadLots(), loadOverview()])
+    } catch (error) {
+      dispatch({ type: 'request-failed', key: 'pendingLotId', message: getApiError(error, 'Nao foi possivel concluir a acao no lote.') })
+    } finally { dispatch({ type: 'lot-action-finished' }) }
+  }, [loadLots, loadOverview])
+
   const visibleUsers = useMemo(
     () => filterAdminRows(state.users, state.usersSearch, ['name', 'email', 'role']),
     [state.users, state.usersSearch],
@@ -112,6 +161,8 @@ export function useAdminViewModel() {
   const setLotsSearch = useCallback((value) => dispatch({ type: 'lots-search', value }), [])
   const openLotConfirmation = useCallback((lot) => dispatch({ type: 'lot-confirmation-opened', lot }), [])
   const closeLotConfirmation = useCallback(() => dispatch({ type: 'lot-confirmation-closed' }), [])
+  const openDeleteConfirmation = useCallback((lot) => dispatch({ type: 'lot-delete-confirmation-opened', lot }), [])
+  const closeDeleteConfirmation = useCallback(() => dispatch({ type: 'lot-delete-confirmation-closed' }), [])
 
   return {
     ...state,
@@ -126,5 +177,18 @@ export function useAdminViewModel() {
     setLotsSearch,
     openLotConfirmation,
     closeLotConfirmation,
+    openDeleteConfirmation,
+    closeDeleteConfirmation,
+    openLotEditor,
+    closeLotEditor,
+    setLotDraft,
+    saveLot,
+    runLotAction,
   }
+}
+
+function toLocalDateTime(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16)
 }

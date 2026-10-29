@@ -26,6 +26,8 @@ export const apiEndpoints = Object.freeze({
     users: '/admin/users',
     userRole: (id) => `/admin/users/${id}/role`,
     lots: '/admin/lots',
+    lot: (id) => `/admin/lots/${id}`,
+    openLot: (id) => `/admin/lots/${id}/open`,
     transactions: '/admin/transactions',
   }),
 })

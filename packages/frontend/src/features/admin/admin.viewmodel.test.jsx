@@ -2,14 +2,14 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAdminViewModel } from './useadmin.viewmodel'
 
-const { get, patch, post } = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), post: vi.fn() }))
+const { get, patch, post, remove } = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn(), post: vi.fn(), remove: vi.fn() }))
 vi.mock('../../context/useAuth', () => ({ useAuth: () => ({ user: { id: 1, name: 'Admin Local', role: 'ADMIN' } }) }))
 vi.mock('../../lib/api', () => ({
-  default: { get, patch, post },
+  default: { get, patch, post, delete: remove },
   apiEndpoints: {
     admin: {
       overview: '/admin/overview', users: '/admin/users', userRole: (id) => `/admin/users/${id}/role`,
-      lots: '/admin/lots', transactions: '/admin/transactions',
+      lots: '/admin/lots', lot: (id) => `/admin/lots/${id}`, openLot: (id) => `/admin/lots/${id}/open`, transactions: '/admin/transactions',
     },
     lots: { close: (id) => `/lots/${id}/close` },
   },
@@ -29,6 +29,7 @@ describe('useAdminViewModel', () => {
     get.mockImplementation(async (path) => responseFor(path))
     patch.mockResolvedValue({ data: { user: {} } })
     post.mockResolvedValue({ data: { receipt: { share_code: 'recibo-local' } } })
+    remove.mockResolvedValue({ data: {} })
   })
 
   it('carrega dados administrativos paginados e aplica filtro memoizado na lista', async () => {
@@ -59,5 +60,25 @@ describe('useAdminViewModel', () => {
     expect(post).toHaveBeenCalledWith('/lots/5/close')
     expect(result.current.confirmLot).toBeNull()
     expect(result.current.notice).toContain('recibo-local')
+  })
+
+  it('cria lote pela API administrativa e recarrega a listagem', async () => {
+    const { result } = renderHook(() => useAdminViewModel())
+    await waitFor(() => expect(result.current.metrics).not.toBeNull())
+    act(() => result.current.openLotEditor())
+    const draft = { item_id: '12', title: 'Relogio', initial_price: '100', min_increment: '5', start_time: '2027-01-01T10:00', end_time: '2027-01-01T11:00' }
+    for (const [name, value] of Object.entries(draft)) act(() => result.current.setLotDraft(name, value))
+    await act(async () => result.current.saveLot({ preventDefault: vi.fn() }))
+    expect(post).toHaveBeenCalledWith('/admin/lots', expect.objectContaining({ item_id: 12, title: 'Relogio' }))
+    expect(result.current.notice).toBe('Lote criado.')
+  })
+
+  it('abre e remove lotes usando as rotas administrativas', async () => {
+    const { result } = renderHook(() => useAdminViewModel())
+    await waitFor(() => expect(result.current.metrics).not.toBeNull())
+    await act(async () => result.current.runLotAction({ id: 9 }, 'open'))
+    expect(post).toHaveBeenCalledWith('/admin/lots/9/open')
+    await act(async () => result.current.runLotAction({ id: 9 }, 'delete'))
+    expect(remove).toHaveBeenCalledWith('/admin/lots/9')
   })
 })

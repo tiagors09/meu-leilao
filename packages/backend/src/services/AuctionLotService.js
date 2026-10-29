@@ -12,6 +12,20 @@ export class AuctionLotService {
   }
 
   async createLot(sellerId, input = {}) {
+    const lotData = await this.validateLotInput(input);
+    return this.auctionLotRepository.createLot({ sellerId, ...lotData });
+  }
+
+  async updateLot(lotId, input = {}) {
+    const parsedLotId = Number(lotId);
+    if (!Number.isInteger(parsedLotId) || parsedLotId <= 0) {
+      throw this.createError('O identificador do lote e invalido.', 400);
+    }
+    const lotData = await this.validateLotInput(input);
+    return this.auctionLotRepository.updateLot(parsedLotId, lotData);
+  }
+
+  async validateLotInput(input = {}) {
     const {
       item_id: itemId,
       title,
@@ -46,8 +60,7 @@ export class AuctionLotService {
       throw this.createError('O item selecionado nao existe no cache local.', 404);
     }
 
-    return this.auctionLotRepository.createLot({
-      sellerId,
+    return {
       itemId: Number(itemId),
       title: title.trim(),
       initialPrice: parsedInitialPrice.toFixed(2),
@@ -55,7 +68,7 @@ export class AuctionLotService {
       startTime: parsedStartTime,
       endTime: parsedEndTime,
       status: parsedStartTime > now ? 'SCHEDULED' : 'LIVE',
-    });
+    };
   }
 
   async listLots(status) {

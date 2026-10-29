@@ -67,6 +67,79 @@
  *     responses:
  *       200: { description: Lotes paginados }
  *       403: { description: Acesso restrito a ADMIN }
+ *   post:
+ *     summary: Cria lote como administrador
+ *     tags: [Administracao]
+ *     security: [{ bearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [item_id, title, initial_price, min_increment, start_time, end_time]
+ *             properties:
+ *               item_id: { type: integer }
+ *               title: { type: string }
+ *               initial_price: { type: number }
+ *               min_increment: { type: number }
+ *               start_time: { type: string, format: date-time }
+ *               end_time: { type: string, format: date-time }
+ *     responses:
+ *       201: { description: Lote criado }
+ *       403: { description: Acesso restrito a ADMIN }
+ * /api/admin/lots/{id}:
+ *   patch:
+ *     summary: Edita lote sem lances
+ *     tags: [Administracao]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [item_id, title, initial_price, min_increment, start_time, end_time]
+ *             properties:
+ *               item_id: { type: integer }
+ *               title: { type: string }
+ *               initial_price: { type: number }
+ *               min_increment: { type: number }
+ *               start_time: { type: string, format: date-time }
+ *               end_time: { type: string, format: date-time }
+ *     responses:
+ *       200: { description: Lote atualizado }
+ *       409: { description: Lote possui lances ou nao pode ser editado }
+ *   delete:
+ *     summary: Remove lote sem lances ou recibos
+ *     tags: [Administracao]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Lote removido }
+ *       409: { description: Lote possui historico e nao pode ser removido }
+ * /api/admin/lots/{id}/open:
+ *   post:
+ *     summary: Abre imediatamente um lote agendado
+ *     tags: [Administracao]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: Lote aberto para lances }
+ *       409: { description: Lote nao pode ser aberto }
  * /api/admin/transactions:
  *   get:
  *     summary: Lista liquidacoes/recibos paginados

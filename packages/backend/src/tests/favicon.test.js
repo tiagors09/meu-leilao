@@ -9,6 +9,7 @@ describe('rota de favicon', () => {
       create: noop, list: noop, get: noop, place: noop, auditLot: noop,
       closeLot: noop, listMine: noop, getShared: noop,
       getOverview: noop, listUsers: noop, updateUserRole: noop, listLots: noop, listTransactions: noop,
+      createLot: noop, updateLot: noop, openLot: noop, deleteLot: noop,
     };
     const app = createApp({
       userController: controller,
@@ -38,6 +39,7 @@ describe('rota de favicon', () => {
       create: noop, list: noop, get: noop, place: noop, auditLot: noop,
       closeLot: noop, listMine: noop, getShared: noop,
       getOverview: noop, listUsers: noop, updateUserRole: noop, listLots: noop, listTransactions: noop,
+      createLot: noop, updateLot: noop, openLot: noop, deleteLot: noop,
     };
     const app = createApp({
       userController: controller,

@@ -3,9 +3,10 @@ const MAX_PAGE_SIZE = 100;
 const MAX_PAGE_NUMBER = 10_000;
 
 export class AdminService {
-  constructor({ adminRepository }) {
+  constructor({ adminRepository, auctionLotService }) {
     if (!adminRepository) throw new Error('A dependencia administrativa e obrigatoria.');
     this.adminRepository = adminRepository;
+    this.auctionLotService = auctionLotService;
   }
 
   getOverview() {
@@ -32,6 +33,30 @@ export class AdminService {
 
   async listLots({ search = '', page = '1', pageSize = '25' } = {}) {
     return this.adminRepository.listLots(this.buildPagination(search, page, pageSize));
+  }
+
+  createLot(actorId, input) {
+    return this.auctionLotService.createLot(actorId, input);
+  }
+
+  updateLot(lotId, input) {
+    return this.auctionLotService.updateLot(lotId, input);
+  }
+
+  async openLot(lotId) {
+    return this.adminRepository.openLot(this.parseLotId(lotId));
+  }
+
+  async deleteLot(lotId) {
+    return this.adminRepository.deleteLot(this.parseLotId(lotId));
+  }
+
+  parseLotId(lotId) {
+    const parsedId = Number(lotId);
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      throw this.createError('O identificador do lote e invalido.', 400);
+    }
+    return parsedId;
   }
 
   async listTransactions({ page = '1', pageSize = '25' } = {}) {

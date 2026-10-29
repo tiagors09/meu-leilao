@@ -64,6 +64,10 @@ Todas as rotas abaixo exigem JWT e papel `ADMIN` atual no banco. Listagens aceit
 | `GET` | `/api/admin/users` | Lista usuarios e saldos de carteira. |
 | `PATCH` | `/api/admin/users/:id/role` | Altera para `ADMIN`, `LEILOEIRO` ou `LICITANTE`; impede autoalteracao e remocao do ultimo admin. |
 | `GET` | `/api/admin/lots` | Lista lotes, contagem de lances, maior lance e lider. |
+| `POST` | `/api/admin/lots` | Cria lote usando item do cache local. |
+| `PATCH` | `/api/admin/lots/:id` | Edita lote sem lances e ainda nao encerrado. |
+| `POST` | `/api/admin/lots/:id/open` | Abre imediatamente um lote agendado valido. |
+| `DELETE` | `/api/admin/lots/:id` | Remove lote sem lances/recibos e ainda nao encerrado. |
 | `GET` | `/api/admin/transactions` | Lista recibos/liquidacoes com paginacao. |
 
 O middleware busca o papel atual no banco em cada requisicao autenticada, de modo que mudancas de papel tenham efeito sem aguardar o JWT expirar. Isso acrescenta uma consulta ao banco por requisicao protegida.

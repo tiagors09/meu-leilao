@@ -82,7 +82,7 @@ export class AdminRepository {
     const values = [`%${search}%`, limit, offset];
     const [lotsResult, countResult] = await Promise.all([
       this.database.query(
-        `SELECT l.id, l.title, l.status, l.initial_price, l.min_increment,
+        `SELECT l.id, l.item_id, l.title, l.status, l.initial_price, l.min_increment,
                 l.start_time, l.end_time, l.created_at, seller.name AS seller_name,
                 COUNT(b.id)::INT AS bids_count, MAX(b.amount) AS current_bid,
                 (ARRAY_AGG(bidder.name ORDER BY b.amount DESC, b.id DESC)
@@ -104,6 +104,55 @@ export class AdminRepository {
       ),
     ]);
     return { lots: lotsResult.rows, total: countResult.rows[0].total };
+  }
+
+  async openLot(lotId) {
+    const client = await this.database.connect();
+    try {
+      await client.query('BEGIN');
+      const selected = await client.query('SELECT id, status, end_time FROM auction_lots WHERE id=$1 FOR UPDATE', [lotId]);
+      const lot = selected.rows[0];
+      if (!lot) throw Object.assign(new Error('Lote nao encontrado.'), { statusCode: 404 });
+      if (lot.status !== 'SCHEDULED' || new Date(lot.end_time) <= new Date()) {
+        throw Object.assign(new Error('Somente lotes agendados e ainda validos podem ser abertos.'), { statusCode: 409 });
+      }
+      const bids = await client.query('SELECT 1 FROM bids WHERE lot_id=$1 LIMIT 1', [lotId]);
+      if (bids.rowCount) throw Object.assign(new Error('Lote com lances nao pode ser reaberto.'), { statusCode: 409 });
+      const result = await client.query(
+        `UPDATE auction_lots SET status='LIVE', start_time=NOW() WHERE id=$1
+         RETURNING id, seller_id, item_id, title, initial_price, min_increment, start_time, end_time, status, created_at`,
+        [lotId],
+      );
+      await client.query('COMMIT');
+      return result.rows[0];
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch { /* Mantem o erro original. */ }
+      throw error;
+    } finally { client.release(); }
+  }
+
+  async deleteLot(lotId) {
+    const client = await this.database.connect();
+    try {
+      await client.query('BEGIN');
+      const selected = await client.query('SELECT id, status FROM auction_lots WHERE id=$1 FOR UPDATE', [lotId]);
+      const lot = selected.rows[0];
+      if (!lot) throw Object.assign(new Error('Lote nao encontrado.'), { statusCode: 404 });
+      if (['CLOSED', 'CANCELLED'].includes(lot.status)) {
+        throw Object.assign(new Error('Lotes encerrados ou cancelados nao podem ser removidos.'), { statusCode: 409 });
+      }
+      const bids = await client.query('SELECT 1 FROM bids WHERE lot_id=$1 LIMIT 1', [lotId]);
+      const receipts = await client.query('SELECT 1 FROM receipts WHERE lot_id=$1 LIMIT 1', [lotId]);
+      if (bids.rowCount || receipts.rowCount) {
+        throw Object.assign(new Error('Lotes com lances ou recibos nao podem ser removidos.'), { statusCode: 409 });
+      }
+      await client.query('DELETE FROM auction_lots WHERE id=$1', [lotId]);
+      await client.query('COMMIT');
+      return { id: Number(lotId) };
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch { /* Mantem o erro original. */ }
+      throw error;
+    } finally { client.release(); }
   }
 
   async listTransactions({ limit, offset }) {

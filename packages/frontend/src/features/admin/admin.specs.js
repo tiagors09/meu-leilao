@@ -29,6 +29,9 @@ export const initialAdminState = {
   pendingRoleId: null,
   pendingLotId: null,
   confirmLot: null,
+  deleteConfirmLot: null,
+  lotEditor: null,
+  lotDraft: null,
 }
 
 export function adminReducer(state, action) {
@@ -47,8 +50,15 @@ export function adminReducer(state, action) {
     case 'role-change-finished': return { ...state, pendingRoleId: null }
     case 'lot-confirmation-opened': return { ...state, confirmLot: action.lot }
     case 'lot-confirmation-closed': return { ...state, confirmLot: null }
+    case 'lot-delete-confirmation-opened': return { ...state, deleteConfirmLot: action.lot }
+    case 'lot-delete-confirmation-closed': return { ...state, deleteConfirmLot: null }
     case 'lot-close-started': return { ...state, pendingLotId: action.id, error: '', notice: '' }
     case 'lot-close-finished': return { ...state, pendingLotId: null, confirmLot: null }
+    case 'lot-editor-opened': return { ...state, lotEditor: action.lot || {}, lotDraft: action.draft, error: '', notice: '' }
+    case 'lot-editor-closed': return { ...state, lotEditor: null, lotDraft: null }
+    case 'lot-draft-changed': return { ...state, lotDraft: { ...state.lotDraft, [action.name]: action.value } }
+    case 'lot-action-started': return { ...state, pendingLotId: action.id, error: '', notice: '' }
+    case 'lot-action-finished': return { ...state, pendingLotId: null, lotEditor: null, lotDraft: null, deleteConfirmLot: null }
     case 'notice': return { ...state, notice: action.message, error: '' }
     default: return state
   }

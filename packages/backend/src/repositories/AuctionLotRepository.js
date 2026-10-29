@@ -31,6 +31,31 @@ export class AuctionLotRepository {
     return result.rows[0];
   }
 
+  async updateLot(lotId, { itemId, title, initialPrice, minIncrement, startTime, endTime, status }) {
+    const client = await this.database.connect();
+    try {
+      await client.query('BEGIN');
+      const existing = await client.query('SELECT id, status FROM auction_lots WHERE id = $1 FOR UPDATE', [lotId]);
+      if (!existing.rows[0]) throw Object.assign(new Error('Lote nao encontrado.'), { statusCode: 404 });
+      if (['CLOSED', 'CANCELLED'].includes(existing.rows[0].status)) {
+        throw Object.assign(new Error('Lotes encerrados ou cancelados nao podem ser editados.'), { statusCode: 409 });
+      }
+      const bids = await client.query('SELECT 1 FROM bids WHERE lot_id = $1 LIMIT 1', [lotId]);
+      if (bids.rowCount) throw Object.assign(new Error('Lotes com lances nao podem ser editados.'), { statusCode: 409 });
+      const result = await client.query(
+        `UPDATE auction_lots SET item_id=$2, title=$3, initial_price=$4, min_increment=$5,
+           start_time=$6, end_time=$7, status=$8 WHERE id=$1
+         RETURNING id, seller_id, item_id, title, initial_price, min_increment, start_time, end_time, status, created_at`,
+        [lotId, itemId, title, initialPrice, minIncrement, startTime, endTime, status],
+      );
+      await client.query('COMMIT');
+      return result.rows[0];
+    } catch (error) {
+      try { await client.query('ROLLBACK'); } catch { /* Mantem o erro original. */ }
+      throw error;
+    } finally { client.release(); }
+  }
+
   async listLots(status) {
     const result = await this.database.query(
       `SELECT id, seller_id, item_id, title, initial_price, min_increment,

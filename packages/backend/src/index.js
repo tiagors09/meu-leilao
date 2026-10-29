@@ -52,7 +52,6 @@ const userService = new UserService({
   tokenSigner: jwt,
   jwtSecret: JWT_SECRET,
 });
-const adminService = new AdminService({ adminRepository });
 const walletService = new WalletService({ walletRepository });
 const itemService = new ItemService({
   itemRepository,
@@ -60,6 +59,7 @@ const itemService = new ItemService({
   apiBaseUrl: process.env.EXTERNAL_ITEMS_API_URL,
 });
 const auctionLotService = new AuctionLotService({ auctionLotRepository, itemRepository });
+const adminService = new AdminService({ adminRepository, auctionLotService });
 const bidService = new BidService({ bidRepository });
 const auditService = new AuditService({ auditRepository });
 const receiptService = new ReceiptService({ receiptRepository });

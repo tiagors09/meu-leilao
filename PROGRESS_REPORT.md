@@ -101,3 +101,10 @@
 - Cadastro publico agora sempre cria `LICITANTE`. Alteracoes de papel sao verificadas no banco pelo middleware de autenticacao; autoalteracao e remocao do ultimo administrador sao impedidas.
 - `/admin` fica sob `BrowserRouter`; Render mantem rewrite `/* -> /index.html` e `public/_redirects` atende hosts estaticos compativeis.
 - Validacao final: 23 testes Jest, 5 cenarios Gherkin/21 passos, 23 testes Vitest, lint e build frontend aprovados.
+
+## Gestao Administrativa de Lotes e Fallback Render
+- `packages/frontend/public/_redirects` contem a regra `/*    /index.html   200`; Vite copia o arquivo para `dist/_redirects`, apoiando refresh de rotas SPA em hosts que usam esse formato. `render.yaml` tambem configura o rewrite do Render.
+- Painel `/admin` agora permite criar lotes a partir de itens no cache, editar lotes sem lances, abrir lotes agendados, encerrar com liquidacao e excluir lotes sem lances/recibos. Estados de carregamento, vazio e erros seguem integrados ao ViewModel.
+- `/api/admin/lots` suporta criacao; `/api/admin/lots/:id` suporta edicao e exclusao; `/api/admin/lots/:id/open` abre um lote agendado. Operacoes de edicao/abertura/exclusao usam transacoes e bloqueios de linha; historico de lances/recibos e preservado.
+- O banco suporta somente `ADMIN`, `LEILOEIRO` e `LICITANTE`; o frontend usa esses valores reais.
+- Validacao: backend Jest + Cucumber, frontend Vitest, lint e build aprovados; artefato SPA confirmado em `dist/_redirects`.

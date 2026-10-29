@@ -46,7 +46,7 @@ As features ficam em `src/features/<feature>/` e separam contratos, estado/regra
 
 Features implementadas: `auction`, `seller`, `lot`, `wallet`, `audit` e `auth`. O Design System em `src/design-system/` exporta `Button`, `Input`, `Card`, `Badge`, `Modal`, `Navbar` e `RouteLink`. As Views usam classes utilitarias Tailwind e componentes compartilhados.
 
-O painel administrativo fica em `src/features/admin/`, usa `useReducer` para seu estado composto, `useMemo` para os filtros e `useCallback` para consultas/mutacoes. As tabelas usam paginacao do backend. Encerrar lote solicita confirmacao e chama a operacao de liquidacao ja existente.
+O painel administrativo fica em `src/features/admin/`, usa `useReducer` para seu estado composto, `useMemo` para os filtros e `useCallback` para consultas/mutacoes. As tabelas usam paginacao do backend. O administrador pode criar/editar lotes sem lances, abrir lotes agendados, encerrar com liquidacao e excluir lotes sem historico. Os papeis aceitos pelo backend sao `ADMIN`, `LEILOEIRO` e `LICITANTE`.
 
 ## Testes e build
 

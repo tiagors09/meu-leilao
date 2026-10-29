@@ -10,6 +10,10 @@ describe('documentacao OpenAPI', () => {
     ];
 
     for (const path of expectedPaths) expect(swaggerSpec.paths[path]).toBeDefined();
+    expect(swaggerSpec.paths['/api/admin/lots'].post).toBeDefined();
+    expect(swaggerSpec.paths['/api/admin/lots/{id}'].patch).toBeDefined();
+    expect(swaggerSpec.paths['/api/admin/lots/{id}'].delete).toBeDefined();
+    expect(swaggerSpec.paths['/api/admin/lots/{id}/open'].post).toBeDefined();
     expect(swaggerSpec.components.securitySchemes.bearerAuth).toMatchObject({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' });
     expect(swaggerSpec.paths['/api/lots/{id}/audit'].get.responses['200']).toBeDefined();
   });

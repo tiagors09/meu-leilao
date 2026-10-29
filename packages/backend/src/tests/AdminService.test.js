@@ -24,4 +24,19 @@ describe('AdminService', () => {
     await expect(service.updateUserRole('1', 'LEILOEIRO', 1)).rejects.toMatchObject({ statusCode: 409 });
     expect(adminRepository.updateUserRole).not.toHaveBeenCalled();
   });
+
+  test('encaminha criacao e edicao para o servico de lotes e ações de ciclo ao repositorio', async () => {
+    const adminRepository = { openLot: jest.fn().mockResolvedValue({ id: 4 }), deleteLot: jest.fn().mockResolvedValue({ id: 4 }) };
+    const auctionLotService = { createLot: jest.fn(), updateLot: jest.fn() };
+    const service = new AdminService({ adminRepository, auctionLotService });
+    await service.createLot(1, { title: 'Lote' });
+    await service.updateLot('4', { title: 'Atualizado' });
+    await service.openLot('4');
+    await service.deleteLot('4');
+    expect(auctionLotService.createLot).toHaveBeenCalledWith(1, { title: 'Lote' });
+    expect(auctionLotService.updateLot).toHaveBeenCalledWith('4', { title: 'Atualizado' });
+    expect(adminRepository.openLot).toHaveBeenCalledWith(4);
+    expect(adminRepository.deleteLot).toHaveBeenCalledWith(4);
+    await expect(service.openLot('abc')).rejects.toMatchObject({ statusCode: 400 });
+  });
 });
