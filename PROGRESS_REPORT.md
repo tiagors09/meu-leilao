@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: passo 06 implementado com vitrine, painel do leiloeiro, sala de lances, carteira e auditoria publica.
-- Ultimo commit realizado: `docs(monorepo): registra conclusao do passo 06`.
+- Ultima funcionalidade concluida: frontend do passo 06 refatorado em MVVM, com Design System neubrutalista pastel.
+- Ultimo commit realizado: `refactor(frontend): migra para design system neubrutalista pastel e mvvm`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -36,10 +36,13 @@
 - Testes unitarios do servico de auditoria e recibos: `npm test --workspace=backend`.
 - Validacao do banco ponta a ponta nao foi possivel nesta execucao: `npm run smoke --workspace=backend` falhou porque o PostgreSQL configurado nao estava acessivel.
 - Frontend em `packages/frontend` usa React Router DOM, Axios centralizado com token JWT do `localStorage` e Tailwind CSS 4 via plugin oficial do Vite.
+- `src/design-system/` exporta `Button`, `Input`, `Card`, `Badge`, `Modal`, `Navbar` e `RouteLink`; componentes seguem a paleta pastel, bordas pretas grossas, sombras rigidas e resposta de clique neubrutalista.
+- Telas de vitrine, leiloeiro, lote, carteira e auditoria estao em `src/features/<tela>/` com `*.Specs.js`, `use*.ViewModel.js`, `*.View.jsx` e um wrapper de pagina; chamadas Axios, estado, validacoes e temporizadores ficam nos ViewModels.
+- Login/cadastro tambem foi separado em `Auth.Specs.js`, `useAccess.ViewModel.js` e `Access.View.jsx`; a navegacao visual foi extraida para o componente `Navbar` do Design System.
 - Rotas de interface: `/`, `/leiloeiro`, `/lote/:id`, `/carteira` e `/auditoria/:id`; telas protegidas exibem acesso apropriado conforme a sessao e o papel recebido no JWT.
 - Vitrine com abas por status; painel do leiloeiro busca itens externos, cria lotes, lista arremate atual e permite encerrar lotes; sala consulta detalhes a cada 3s, mostra contagem regressiva e permite lances; carteira consulta saldo e deposita; auditoria publica mostra a timeline e integridade dos elos.
 - `GET /api/lots/:id` adicionado para expor os detalhes e o lance lider ao cliente da sala, incluindo imagem do item e identificador do licitante lider para o estado da disputa.
-- Verificacao frontend: `npm run lint --workspace=frontend` e `npm run build --workspace=frontend` aprovados.
+- Verificacao frontend: `npm run lint --workspace=frontend` e `npm run build --workspace=frontend` aprovados apos a refatoracao MVVM.
 
 ## Status do MVP
 - Passos 01 a 06 concluidos: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances, auditoria/liquidacao/recibos e frontend React/Vite/Tailwind.
