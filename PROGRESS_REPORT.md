@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: frontend do passo 06 refatorado em MVVM, com Design System neubrutalista pastel.
-- Ultimo commit realizado: `refactor(frontend): migra para design system neubrutalista pastel e mvvm`.
+- Ultima funcionalidade concluida: passo 07 preparado e validado localmente (seeds, testes, CI e Docker).
+- Ultimo commit realizado: `docs(monorepo): conclui documentacao do passo 07`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -34,16 +34,22 @@
 - `ReceiptService({ receiptRepository })` e controller injetado; fechamento protegido em `POST /api/lots/:id/close` para `LEILOEIRO`/`ADMIN`, recibos do proprio licitante em `GET /api/receipts/me` e consulta publica do comprovante em `GET /api/receipts/:shareCode`.
 - Lotes encerrados sem lances ficam `CLOSED` sem recibo; lances anteriores ja liberam a reserva do lider anterior durante a disputa, e no encerramento o vencedor tem valor debitado do total e do comprometido.
 - Testes unitarios do servico de auditoria e recibos: `npm test --workspace=backend`.
-- Validacao do banco ponta a ponta nao foi possivel nesta execucao: `npm run smoke --workspace=backend` falhou porque o PostgreSQL configurado nao estava acessivel.
+- Validacao do banco: seeds executadas duas vezes no PostgreSQL local e `npm run smoke --workspace=backend` aprovado.
 - Frontend em `packages/frontend` usa React Router DOM, Axios centralizado com token JWT do `localStorage` e Tailwind CSS 4 via plugin oficial do Vite.
 - `src/design-system/` exporta `Button`, `Input`, `Card`, `Badge`, `Modal`, `Navbar` e `RouteLink`; componentes seguem a paleta pastel, bordas pretas grossas, sombras rigidas e resposta de clique neubrutalista.
-- Telas de vitrine, leiloeiro, lote, carteira e auditoria estao em `src/features/<tela>/` com `*.Specs.js`, `use*.ViewModel.js`, `*.View.jsx` e um wrapper de pagina; chamadas Axios, estado, validacoes e temporizadores ficam nos ViewModels.
-- Login/cadastro tambem foi separado em `Auth.Specs.js`, `useAccess.ViewModel.js` e `Access.View.jsx`; a navegacao visual foi extraida para o componente `Navbar` do Design System.
+- Telas de vitrine, leiloeiro, lote, carteira e auditoria estao em `src/features/<tela>/` com nomes de specs, viewmodels e views totalmente em minusculo; chamadas Axios, estado, validacoes e temporizadores ficam nos ViewModels.
+- Login/cadastro tambem foi separado em `auth.specs.js`, `useaccess.viewmodel.js` e `access.view.jsx`; a navegacao visual foi extraida para o componente `Navbar` do Design System.
 - Rotas de interface: `/`, `/leiloeiro`, `/lote/:id`, `/carteira` e `/auditoria/:id`; telas protegidas exibem acesso apropriado conforme a sessao e o papel recebido no JWT.
 - Vitrine com abas por status; painel do leiloeiro busca itens externos, cria lotes, lista arremate atual e permite encerrar lotes; sala consulta detalhes a cada 3s, mostra contagem regressiva e permite lances; carteira consulta saldo e deposita; auditoria publica mostra a timeline e integridade dos elos.
 - `GET /api/lots/:id` adicionado para expor os detalhes e o lance lider ao cliente da sala, incluindo imagem do item e identificador do licitante lider para o estado da disputa.
 - Verificacao frontend: `npm run lint --workspace=frontend` e `npm run build --workspace=frontend` aprovados apos a refatoracao MVVM.
 
 ## Status do MVP
-- Passos 01 a 06 concluidos: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances, auditoria/liquidacao/recibos e frontend React/Vite/Tailwind.
-- Proximo passo do roteiro: passo 07 (seeds e deploy no Render).
+- Passos 01 a 07 concluidos em codigo: setup e banco, autenticacao/carteira, integracao externa/lotes, motor de lances, auditoria/liquidacao/recibos, frontend React/Vite/Tailwind, seeds e pipeline de validacao.
+- `packages/backend/src/seeds.js` inicializa o schema e semeia leiloeiro, dois licitantes, carteiras de R$ 5.000, item e lote LIVE em transacao idempotente. Credenciais de demonstracao: `leiloeiro@verzel.com`, `cliente1@verzel.com` e `cliente2@verzel.com`, senha `123456`.
+- Scripts `seed`, `test`, `test:unit` e `test:gherkin` adicionados ao workspace backend; scripts raiz `seed`, `test` e `test:frontend` facilitam a execucao.
+- Gherkin cobre deposito, reserva de saldo, lance abaixo do minimo e bloqueio do lider atual. Jest cobre regras de lances, cadeia SHA-256 e recibos.
+- `.github/workflows/ci.yml` executa Jest/Cucumber, lint e build em push/PR para `main`.
+- `packages/backend/Dockerfile` usa contexto de build na raiz (`docker build -f packages/backend/Dockerfile .`), instala apenas dependencias de runtime e inicia via `npm run start`; backend respeita `PORT` e escuta em `0.0.0.0`.
+- Validacoes locais do passo 07: seed executado duas vezes, testes Jest (10) e Cucumber (4 cenarios) aprovados, lint e build frontend aprovados, imagem Docker construida com contexto raiz.
+- Deploy publico no GitHub/Render nao foi realizado: requer conectar/provisionar recursos na conta Render e configurar variaveis e dominios do ambiente.
