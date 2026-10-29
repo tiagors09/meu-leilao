@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: verzel-leilao-frontend
+    runtime: static
+    buildCommand: npm ci && npm run build --workspace=frontend
+    staticPublishPath: packages/frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false

@@ -1,8 +1,8 @@
 # Relatorio de Progresso e Ponto de Parada
 
 ## Status Atual
-- Ultima funcionalidade concluida: endpoints frontend-backend homologados e pagina Pug dinamica na raiz do backend.
-- Ultimo commit realizado: `feat(backend): adiciona pagina index com pug e botao para o swagger`.
+- Ultima funcionalidade concluida: fallback de rotas SPA no Render para refresh em sub-rotas do frontend.
+- Ultimo commit realizado: `fix(frontend): configura fallback de rotas spa para evitar 404 no refresh`.
 
 ## Estruturas e Interfaces Criadas
 - `UserRepository(database)`: `findByEmail(email)` e `createUser(...)`; cria usuario e carteira em uma transacao.
@@ -77,3 +77,8 @@
 - ViewModels extraem a mensagem `{ error }` do backend e as Views apresentam os estados de erro; testes validam mensagens, caminhos e estados.
 - A rota `GET /` renderiza `packages/backend/views/index.pug` com status, versao do package e timestamp; o link leva ao Swagger. O CSS inline usa nonce CSP.
 - Validacao: backend 16 testes Jest e 5 cenarios/21 passos Cucumber; frontend 17 testes Vitest, lint e build aprovados; `node --check packages/backend/src/index.js` aprovado.
+
+## Fallback de Rotas SPA
+- `render.yaml` configura o Static Site do frontend com rewrite `/*` para `/index.html`, fazendo `/leiloeiro`, `/lote/:id`, `/carteira` e `/auditoria/:id` chegarem ao React Router quando acessadas diretamente ou atualizadas.
+- O Blueprint executa o build do workspace frontend e publica `packages/frontend/dist`; `VITE_API_URL` deve ser informado com o endereco publico do backend terminado em `/api`.
+- `docs/passo_07_seeds_e_deploy_no_render.md` atualizado com as instrucoes de fallback.
