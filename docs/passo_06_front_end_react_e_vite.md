@@ -1,31 +1,71 @@
-# 💻 Passo 06 — Front-end com React, Vite e Polling
+# 💻 Passo 06 — Front-end com React, Vite, Tailwind CSS e Polling
 
 ## 🎯 Objetivo
-Construir as telas do cliente e leiloeiro utilizando React + Vite, com atualização em tempo real via Polling (consultas Periódicas).
+
+Construir as telas do cliente e leiloeiro utilizando React + Vite + Tailwind CSS, com atualização em tempo real via Polling (consultas periódicas a cada 3 segundos).
 
 ---
 
 ## 📋 Checklist de Execução
 
-### 1. Setup da Aplicação Front-end
-* [ ] Criar app com Vite em `packages/frontend`:
-  ```bash
-  npm create vite@latest . -- --template react
-  npm install axios react-router-dom
-  ```
+### 1. Setup da Aplicação Front-end e Tailwind CSS
 
-### 2. Telas Obrigatórias
+* [ ] Criar app com Vite em `packages/frontend`:
+```bash
+cd packages/frontend
+npm create vite@latest . -- --template react
+npm install axios react-router-dom
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+```
+
+
+* [ ] Configurar o `tailwind.config.js` para varrer os arquivos `.jsx`/`.tsx`:
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: { extend: {} },
+  plugins: [],
+}
+
+```
+
+
+* [ ] Adicionar as diretivas do Tailwind no arquivo de estilo principal (ex: `src/index.css` ou `src/App.css`):
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+```
+
+
+
+### 2. Telas Obrigatórias com Estilização Tailwind
+
 * [ ] **Vitrine (`/`):**
-  * Abas separadas: Lotes "Ao Vivo", "Agendados" e "Encerrados".
+* Layout limpo em grid/flexbox com abas separadas por estado: Lotes **"Ao Vivo"** (badge verde animada), **"Agendados"** (badge amarela) e **"Encerrados"** (badge cinza).
+
+
 * [ ] **Painel do Leiloeiro (`/leiloeiro`):**
-  * Input de busca na API externa.
-  * Formulário de cadastro de lote.
-  * Tabela com total arrecadado por lote.
+* Input de busca integrado à API externa de itens.
+* Formulário estruturado em cartões (`card`, `shadow`, `rounded-lg`).
+* Tabela moderna exibindo os lotes cadastrados e o total arrecadado por lote.
+
+
 * [ ] **Sala do Lote ao Vivo (`/lote/:id`):**
-  * Exibir valor do lance atual, contagem regressiva e botão "Dar Lance".
-  * **Tempo Real Simples (Polling):** Utilizar `useEffect` com `setInterval` rodando a cada 3 segundos para atualizar a lista de lances sem recarregar a tela.
-  * Exibir tag visual clara: **"Você está ganhando"** (verde) ou **"Você foi superado"** (vermelho).
+* Exibição em destaque do valor do lance atual, contagem regressiva e botão de "Dar Lance" com estados de loading e disabled.
+* **Tempo Real Simples (Polling):** Utilizar `useEffect` com `setInterval` a cada 3 segundos para buscar os lances sem recarregar a página.
+* Indicador visual dinâmico com cores do Tailwind: **"Você está ganhando"** (`bg-green-100 text-green-800 border-green-400`) ou **"Você foi superado"** (`bg-red-100 text-red-800 border-red-400`).
+
+
 * [ ] **Carteira (`/carteira`):**
-  * Exibir Saldo Total, Saldo Comprometido e Saldo Disponível. Botão para depósito simulado.
+* Cards visuais exibindo o Saldo Total, Saldo Comprometido e Saldo Disponível.
+* Modal ou formulário inline para depósito simulado com feedback visual imediato.
+
+
 * [ ] **Página de Auditoria (`/auditoria/:id`):**
-  * Rota pública que exibe a linha do tempo dos lances e selo de **"Histórico Íntegro"**.
+* Rota pública com linha do tempo (`timeline`) dos lances encadeados por hash SHA-256.
+* Selo visual de destaque: **"Histórico Íntegro"** (com ícone e borda verde esmeralda).
