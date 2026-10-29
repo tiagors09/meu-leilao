@@ -87,3 +87,9 @@
 - No boot, o backend aplica `src/config/init.sql` em uma transacao antes de iniciar o listener HTTP; um advisory lock serializa a criacao do schema entre instancias.
 - `npm run start --workspace=backend` executa diretamente `node src/index.js`, sem depender de um script migrate inexistente ou de uma etapa manual.
 - Testes unitarios cobrem sucesso, rollback em falha e liberacao da conexao.
+
+## Documentacao do Projeto
+- README raiz atualizado com arquitetura, setup, deploy, perfis, credenciais de seed, limitacoes e roadmap.
+- READMEs do backend e frontend documentam rotas, configuracao, schema no boot, Swagger/Pug, MVVM, consumo de API e fallback SPA.
+- `DEVELOPMENT_LOG.md` resume a linha do tempo a partir dos hashes e assuntos reais do Git; incidentes Render sem commit identificador estao marcados como relato, nao como fato deduzido do historico.
+- Riscos explicitados: atribuicao de papel privilegiado pelo cadastro, CORS aberto por padrao, ausencia de migracoes versionadas e polling em vez de push.
