@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../context/useAuth'
-import api, { getApiError, money } from '../../lib/api'
+import api, { apiEndpoints, getApiError, money } from '../../lib/api'
 import { walletCards, walletError } from './wallet.specs'
 
 export function useWalletViewModel() {
@@ -13,7 +13,7 @@ export function useWalletViewModel() {
   const [notice, setNotice] = useState('')
 
   async function refresh(initial = false) {
-    try { const { data } = await api.get('/wallets/me'); setWallet(data); setError('') }
+    try { const { data } = await api.get(apiEndpoints.wallets.me); setWallet(data); setError('') }
     catch (requestError) { setError(getApiError(requestError, walletError)) }
     finally { if (initial) setLoading(false) }
   }
@@ -27,7 +27,7 @@ export function useWalletViewModel() {
     event.preventDefault()
     setBusy(true); setError(''); setNotice('')
     try {
-      const { data } = await api.post('/wallets/deposit', { amount })
+      const { data } = await api.post(apiEndpoints.wallets.deposit, { amount })
       setWallet(data); setAmount(''); setNotice('Deposito simulado concluido. Seu saldo ja foi atualizado.')
     } catch (requestError) { setError(getApiError(requestError, 'Nao foi possivel fazer o deposito.')) }
     finally { setBusy(false) }

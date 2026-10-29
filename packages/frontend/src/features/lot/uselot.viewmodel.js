@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
-import api, { dateTime, getApiError, money } from '../../lib/api'
+import api, { apiEndpoints, dateTime, getApiError, money } from '../../lib/api'
 import { DEFAULT_BID_ERROR, DEFAULT_LOT_ERROR, LOT_POLL_INTERVAL_MS } from './lot.specs'
 
 function getMinimumBid(lot) {
@@ -30,7 +30,7 @@ export function useLotViewModel(lotId) {
 
   const refresh = useCallback(async (initial = false) => {
     try {
-      const { data } = await api.get(`/lots/${lotId}`)
+      const { data } = await api.get(apiEndpoints.lots.item(lotId))
       setLot(data)
       setError('')
       const next = getMinimumBid(data)
@@ -56,7 +56,7 @@ export function useLotViewModel(lotId) {
     setError('')
     setNotice('')
     try {
-      await api.post(`/lots/${lotId}/bids`, { amount })
+      await api.post(apiEndpoints.lots.bids(lotId), { amount })
       setNotice('Seu lance foi registrado com seguranca.')
       await refresh()
     } catch (requestError) {

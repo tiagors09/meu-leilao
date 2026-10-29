@@ -5,6 +5,7 @@ import { useAuditViewModel } from './useaudit.viewmodel'
 const { get } = vi.hoisted(() => ({ get: vi.fn() }))
 vi.mock('../../lib/api', () => ({
   default: { get },
+  apiEndpoints: { lots: { audit: (id) => `/lots/${id}/audit` } },
   getApiError: (error, fallback) => error.response?.data?.error || fallback,
   money: (value) => `R$ ${Number(value).toFixed(2)}`,
   dateTime: (value) => value,

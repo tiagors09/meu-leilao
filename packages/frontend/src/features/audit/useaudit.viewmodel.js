@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import api, { dateTime, getApiError, money } from '../../lib/api'
+import api, { apiEndpoints, dateTime, getApiError, money } from '../../lib/api'
 import { auditLoadError } from './audit.specs'
 
 export function useAuditViewModel(lotId) {
@@ -9,7 +9,7 @@ export function useAuditViewModel(lotId) {
   const [loading, setLoading] = useState(true)
   useEffect(() => {
     let active = true
-    api.get(`/lots/${lotId}/audit`).then(({ data }) => { if (active) setAudit(data) })
+    api.get(apiEndpoints.lots.audit(lotId)).then(({ data }) => { if (active) setAudit(data) })
       .catch((requestError) => { if (active) setError(getApiError(requestError, auditLoadError)) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }

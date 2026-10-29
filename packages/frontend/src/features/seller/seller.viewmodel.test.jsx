@@ -5,6 +5,10 @@ import { useSellerViewModel } from './useseller.viewmodel'
 const { get } = vi.hoisted(() => ({ get: vi.fn() }))
 vi.mock('../../lib/api', () => ({
   default: { get },
+  apiEndpoints: {
+    lots: { collection: '/lots', item: (id) => `/lots/${id}` },
+    items: { search: '/external-items/search' },
+  },
   getApiError: (error, fallback) => error.response?.data?.error || fallback,
   money: (value) => `R$ ${Number(value).toFixed(2)}`,
   dateTime: (value) => value,

@@ -5,6 +5,7 @@ import { useLotViewModel } from './uselot.viewmodel'
 const { get, post } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
 vi.mock('../../lib/api', () => ({
   default: { get, post },
+  apiEndpoints: { lots: { item: (id) => `/lots/${id}`, bids: (id) => `/lots/${id}/bids` } },
   getApiError: (error, fallback) => error.response?.data?.error || fallback,
   money: (value) => `R$ ${Number(value).toFixed(2)}`,
   dateTime: (value) => value,

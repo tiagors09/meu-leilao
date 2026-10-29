@@ -5,6 +5,7 @@ import { useAuctionViewModel } from './useauction.viewmodel'
 const { get } = vi.hoisted(() => ({ get: vi.fn() }))
 vi.mock('../../lib/api', () => ({
   default: { get },
+  apiEndpoints: { lots: { collection: '/lots' } },
   getApiError: (error, fallback) => error.response?.data?.error || fallback,
   money: (value) => `R$ ${Number(value).toFixed(2)}`,
   dateTime: (value) => value,

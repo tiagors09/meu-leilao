@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AuthContext } from './authContextValue'
-import api from '../lib/api'
+import api, { apiEndpoints } from '../lib/api'
 
 
 export function AuthProvider({ children }) {
@@ -9,14 +9,14 @@ export function AuthProvider({ children }) {
   })
 
   async function signIn(credentials) {
-    const { data } = await api.post('/users/login', credentials)
+    const { data } = await api.post(apiEndpoints.users.login, credentials)
     localStorage.setItem('leilao_token', data.token)
     localStorage.setItem('leilao_user', JSON.stringify(data.user))
     setUser(data.user)
   }
 
   async function signUp(account) {
-    const { data } = await api.post('/users/register', account)
+    const { data } = await api.post(apiEndpoints.users.register, account)
     localStorage.setItem('leilao_token', data.token)
     localStorage.setItem('leilao_user', JSON.stringify(data.user))
     setUser(data.user)

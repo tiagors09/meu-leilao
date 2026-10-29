@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../../context/useAuth'
-import api, { dateTime, getApiError, money } from '../../lib/api'
+import api, { apiEndpoints, dateTime, getApiError, money } from '../../lib/api'
 import { emptyLotForm } from './seller.specs'
 
 export function useSellerViewModel() {
@@ -17,9 +17,9 @@ export function useSellerViewModel() {
 
   const loadLots = useCallback(async () => {
     try {
-      const { data } = await api.get('/lots')
+      const { data } = await api.get(apiEndpoints.lots.collection)
       const details = await Promise.all((data.lots || []).map(async (lot) => {
-        try { return (await api.get(`/lots/${lot.id}`)).data } catch { return lot }
+        try { return (await api.get(apiEndpoints.lots.item(lot.id))).data } catch { return lot }
       }))
       setLots(details.map((lot) => ({ ...lot, closeable: canManage && !['CLOSED', 'CANCELLED'].includes(lot.status), closingDate: dateTime(lot.end_time), currentAmount: lot.current_bid?.amount ? money(lot.current_bid.amount) : 'Sem lances' })))
     } catch (requestError) { setError(getApiError(requestError, 'Nao foi possivel carregar os lotes.')) }
@@ -43,7 +43,7 @@ export function useSellerViewModel() {
     setError('')
     setNotice('')
     try {
-      const { data } = await api.get('/external-items/search', { params: { q: query } })
+      const { data } = await api.get(apiEndpoints.items.search, { params: { q: query } })
       setItems(data.items || [])
       setNotice(data.items?.length ? `${data.items.length} item(ns) encontrado(s) no ${data.source === 'cache' ? 'cache' : 'catalogo externo'}.` : 'Nenhum item encontrado para esta busca.')
     } catch (requestError) { setError(getApiError(requestError, 'Nao foi possivel buscar itens.')) }
@@ -57,7 +57,7 @@ export function useSellerViewModel() {
     setError('')
     setNotice('')
     try {
-      await api.post('/lots', {
+      await api.post(apiEndpoints.lots.collection, {
         item_id: selectedItem.id,
         title: form.title || selectedItem.title,
         initial_price: form.initial_price,
@@ -77,7 +77,7 @@ export function useSellerViewModel() {
     setError('')
     setNotice('')
     try {
-      const { data } = await api.post(`/lots/${lotId}/close`)
+      const { data } = await api.post(apiEndpoints.lots.close(lotId))
       setNotice(data.receipt ? `Lote encerrado. Comprovante: ${data.receipt.share_code}` : 'Lote encerrado sem lances vencedores.')
       await loadLots()
     } catch (requestError) { setError(getApiError(requestError, 'Nao foi possivel encerrar o lote.')) }

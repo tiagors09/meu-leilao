@@ -1,7 +1,30 @@
 import axios from 'axios'
 
+export function resolveApiBaseUrl(configuredUrl, isDevelopment = import.meta.env.DEV) {
+  const configured = typeof configuredUrl === 'string' ? configuredUrl.trim() : ''
+  const base = configured || (isDevelopment ? 'http://localhost:3000' : '')
+  if (!base) return '/api'
+
+  const normalized = base.replace(/\/+$/, '')
+  return /\/api$/i.test(normalized) ? normalized : `${normalized}/api`
+}
+
+export const apiEndpoints = Object.freeze({
+  users: Object.freeze({ login: '/users/login', register: '/users/register' }),
+  wallets: Object.freeze({ me: '/wallets/me', deposit: '/wallets/deposit' }),
+  items: Object.freeze({ search: '/external-items/search' }),
+  lots: Object.freeze({
+    collection: '/lots',
+    item: (id) => `/lots/${id}`,
+    bids: (id) => `/lots/${id}/bids`,
+    audit: (id) => `/lots/${id}/audit`,
+    close: (id) => `/lots/${id}/close`,
+  }),
+  receipts: Object.freeze({ me: '/receipts/me' }),
+})
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: resolveApiBaseUrl(import.meta.env.VITE_API_URL),
   headers: { 'Content-Type': 'application/json' },
 })
 

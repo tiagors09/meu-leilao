@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import api, { getApiError } from '../../lib/api'
+import api, { apiEndpoints, getApiError } from '../../lib/api'
 import { auctionTabs } from './auction.specs'
 import { dateTime, money } from '../../lib/api'
 
@@ -11,7 +11,7 @@ export function useAuctionViewModel() {
 
   useEffect(() => {
     let mounted = true
-    api.get('/lots').then(({ data }) => { if (mounted) setLots(data.lots || []) })
+    api.get(apiEndpoints.lots.collection).then(({ data }) => { if (mounted) setLots(data.lots || []) })
       .catch((requestError) => { if (mounted) setError(getApiError(requestError, 'Nao foi possivel carregar os lotes.')) })
       .finally(() => { if (mounted) setLoading(false) })
     return () => { mounted = false }
